@@ -135,7 +135,7 @@ void ex3_49()
 
 void ex3_50()
 {
-	size_t N = 10, M = 2;
+	size_t N = 1000000, M = 2;
 
 	link t, x;
 	size_t i;
@@ -151,7 +151,7 @@ void ex3_50()
 	}
 	x = next(x);
 
-	printList(x);
+	//printList(x);
 
 	while (x != next(x))
 	{
@@ -176,9 +176,9 @@ void ex3_50()
 
 	start_time = clock();
 
-	t = generateCircularList(10, 0);
+	t = generateCircularList(N, 0);
 
-	printList(t);
+	//printList(t);
 
 	cout << "-----------------" << endl;
 

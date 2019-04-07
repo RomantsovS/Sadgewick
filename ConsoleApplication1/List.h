@@ -7,22 +7,26 @@ using std::cout;
 using std::cin;
 using std::endl;
 
+template<typename T>
 struct node
 {
 	node() : next(nullptr) {}
-	node(int x, node *t = nullptr) : item(x), next(t) {}
+	node(T x, node *t = nullptr) : item(x), next(t) {}
 
-	int item;
+	T item;
 	node *next;
 };
 
-using link = node *;
+template <typename T>
+using link = node<T> *;
 
-link freelist = nullptr;
+template <typename T>
+link<T> freelist = nullptr;
 
+template <typename T>
 void construct(int N)
 {
-	freelist = new node[N + 1];
+	freelist = new node<T>[N + 1];
 
 	for (size_t i = 0; i != N; ++i)
 	{
@@ -30,64 +34,78 @@ void construct(int N)
 	}
 }
 
+template <typename T>
 void destruct()
 {
 	delete[] freelist;
 }
 
-void insert(link x, link t)
+template <typename T>
+void insert(link<T> x, link<T> t)
 {
 	t->next = x->next;
 	x->next = t;
 }
 
-link remove(link x)
+template <typename T>
+link<T> remove(link<T> x)
 {
 	link t = x->next;
 	x->next = t->next;
 	return t;
 }
 
-link newNode(int i)
+template <typename T>
+link<T> newNode(int i)
 {
-	link x = remove(freelist);
+	link<T> x = remove(freelist<T>);
 	x->item = i;
 	x->next = x;
 	      
 	return x;
 }
 
-void deleteNode(link x)
+template <typename T>
+void deleteNode(link<T> x)
 {
-	insert(freelist, x);
+	insert(freelist<T>, x);
 }
 
-link newNodeN(int i)
+
+template <typename T>
+link<T> newNodeN(T i)
 {
-	link t = new node(i);
+	auto t = new node<T>(i);
 
 	//cout << "new " << t << endl;
 
 	return t;
 }
 
-void deleteNodeN(link x)
+
+template <typename T>
+void deleteNodeN(link<T> x)
 {
 	//cout << "del " << x << endl;
 	delete x;
 }
 
-link next(link x)
+
+template <typename T>
+link<T> next(link<T> x)
 {
 	return x->next;
 }
 
-int item(link x)
+template <typename T>
+int item(link<T> x)
 {
 	return x->item;
 }
 
-void printList(link t)
+
+template <typename T>
+void printList(link<T> t)
 {
 	if (!t)
 	{
@@ -105,7 +123,9 @@ void printList(link t)
 	} while (x != t && x);
 }
 
-link generateList(size_t len, int start)
+
+template <typename T>
+link<T> generateList(size_t len, T start)
 {
 	auto t = newNodeN(start);
 
@@ -119,7 +139,9 @@ link generateList(size_t len, int start)
 	return t;
 }
 
-link generateRandList(size_t len, size_t max_val)
+
+template <typename T>
+link<T> generateRandList(size_t len, size_t max_val)
 {
 	link t = new node(rand() % max_val, 0);
 
@@ -133,7 +155,9 @@ link generateRandList(size_t len, size_t max_val)
 	return t;
 }
 
-link generateCircularList(size_t len, int start)
+
+template <typename T>
+link<T> generateCircularList(size_t len, int start)
 {
 	link t = new node(start, 0);
 
@@ -149,7 +173,9 @@ link generateCircularList(size_t len, int start)
 	return t;
 }
 
-void inverse_list(link &x)
+
+template <typename T>
+void inverse_list(link<T> &x)
 {
 	link r = 0, y = x, t;
 
@@ -167,9 +193,10 @@ void inverse_list(link &x)
 	x = r;
 }
 
-void sort_list(link &a)
+template <typename T>
+void sort_list(link<T> &a)
 {
-	link b = new node(0), x, u, t;
+	auto b = new node(0), x, u, t;
 
 	for (t = a->next; t != 0; t = u)
 	{
@@ -187,5 +214,15 @@ void sort_list(link &a)
 
 	a = b;
 }
+
+template<typename T, size_t N>
+struct node_multi_dimension
+{
+	node_multi_dimension() : dimensions(N) {}
+	node_multi_dimension(T x, vector<node_multi_dimension*> t) : item(x), dimensions(t) {}
+
+	T item;
+	vector<node_multi_dimension*> dimensions;
+};
 
 #endif
