@@ -188,9 +188,18 @@ void ex_3_66()
 
 	auto mat2d = malloc2d<int>(N, M);
 
-	mat2d[0][0] = 1;
+	for (size_t i = 0; i != N; ++i)
+	{
+		mat2d[rand() % N][rand() % M] = i + 1;
+	}
 
-	multilist_mat2d<int>(mat2d, N, M);
+	print_mat2d(mat2d, N, M);
+
+	cout << "-----------------------" << endl;
+
+	multilist_mat2d<int> m_list(mat2d, N, M);
+
+	m_list.print();
 }
 
 int main()
