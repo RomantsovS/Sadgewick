@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include <iostream>
+#include <memory>
 
 using std::cout;
 using std::cin;
@@ -215,14 +216,61 @@ void sort_list(link<T> &a)
 	a = b;
 }
 
-template<typename T, size_t N>
-struct node_multi_dimension
+template<typename T>
+T **malloc2d(int r, int c)
 {
-	node_multi_dimension() : dimensions(N) {}
-	node_multi_dimension(T x, vector<node_multi_dimension*> t) : item(x), dimensions(t) {}
+	auto **t = new T *[r];
+	for (int i = 0; i < r; ++i)
+		t[i] = new T[c];
 
-	T item;
-	vector<node_multi_dimension*> dimensions;
+	return t;
+}
+
+template<typename T>
+T ***malloc3d(int r, int c, int b)
+{
+	auto ***t = new T **[r];
+	for (int i = 0; i < r; ++i)
+	{
+		t[i] = malloc2d<T>(c, b);
+	}
+
+	return t;
+}
+
+template<typename T>
+class multilist_mat2d
+{
+private:
+	template<typename T>
+	struct node_multi_dimension
+	{
+		node_multi_dimension(T x, size_t N) : item(x), dimensions(N, nullptr) {}
+		node_multi_dimension(T x, size_t, N, std::vector<std::shared_ptr<node_multi_dimension<T>>> t) : item(x), dimensions(N) {}
+
+		T item;
+		std::vector<std::shared_ptr<node_multi_dimension<T>>> dimensions;
+	};
+
+	std::vector<std::shared_ptr<node_multi_dimension<T>>> cols;
+	std::vector<std::shared_ptr<node_multi_dimension<T>>> rows;
+public:
+	multilist_mat2d(size_t r, size_t c) : cols(r, nullptr), rows(c, nullptr) {}
+	multilist_mat2d(T **mat, size_t r, size_t c) : cols(r, nullptr), rows(c, nullptr)
+	{
+		for (size_t i = 0; i != r; ++i)
+		{
+			auto cur_col_ptr = cols[i];
+
+			for (size_t j = 0; j != c; ++j)
+			{
+				if (mat[i][j])
+				{
+					auto node = std::make_shared<node_multi_dimension<T>>(mat[i][j], 2);
+				}
+			}
+		}
+	}
 };
 
 #endif

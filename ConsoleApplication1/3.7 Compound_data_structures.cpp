@@ -50,7 +50,7 @@ void ex_3_17()
 	char *a[Nmax];
 	int N;
 	char buf[Mmax];
-	int M = 0;
+	size_t M = 0;
 	
 	for (N = 0; N < Nmax; ++N)
 	{
@@ -114,16 +114,6 @@ void grid_insert(float x, float y)
 	grid[X][Y] = t;
 }
 
-template<typename T>
-T **malloc2d(int r, int c)
-{
-	auto **t = new T *[r];
-	for (int i = 0; i < r; ++i)
-		t[i] = new T[c];
-
-	return t;
-}
-
 void ex_3_20()
 {
 	int i, N = 100;
@@ -140,18 +130,6 @@ void ex_3_20()
 	cout << cnt << " pairs within " << d << endl;
 }
 
-template<typename T>
-T ***malloc3d(int r, int c, int b)
-{
-	auto ***t = new T **[r];
-	for (int i = 0; i < r; ++i)
-	{
-		t[i] = malloc2d<T>(c, b);
-	}
-
-	return t;
-}
-
 void ex_3_62()
 {
 	auto mas3d = malloc3d<int>(3, 4, 5);
@@ -161,7 +139,7 @@ void ex_3_62()
 	for (int i = 0; i < 3; ++i)
 		for (int j = 0; j < 4; ++j)
 			for (int k = 0; k < 5; ++k)
-				mas3d[i][j][k] = cnt++;
+				mas3d[i][j][k] = static_cast<std::remove_pointer<std::remove_pointer<std::remove_pointer<decltype(mas3d)>::type>::type>::type>(cnt++);
 
 	for (int i = 0; i < 3; ++i)
 		for (int j = 0; j < 4; ++j)
@@ -185,7 +163,7 @@ void ex_3_63()
 	char *a[Nmax];
 	int N;
 	char buf[Nmax];
-	int M = 0;
+	size_t M = 0;
 
 	for (N = 0; N < Nmax; ++N)
 	{
@@ -208,47 +186,11 @@ void ex_3_66()
 {
 	const size_t N = 4, M = 8;
 
-	auto mas2d = malloc2d<int>(N, M);
+	auto mat2d = malloc2d<int>(N, M);
 
-	for (size_t i = 0; i != N; ++i)
-	{
-		for (size_t j = 0; j != M; ++j)
-		{
-			mas2d[i][j] = rand() % 2;
-		}
-	}
+	mat2d[0][0] = 1;
 
-	cout << "    ";
-	for (int j = 0; j != M; ++j)
-		cout << j << " ";
-	cout << endl << endl;
-	
-	for (int i = 0; i != N; ++i)
-	{
-		cout << i << "   ";
-
-		for (int j = 0; j != M; ++j)
-			cout << mas2d[i][j] << " ";
-		
-		cout << endl;
-	}
-
-	for (size_t i = 0; i != N; ++i)
-	{
-		for (size_t j = 0; j != M; ++j)
-		{
-			if (mas2d[i][j])
-			{
-
-			}
-		}
-	}
-
-
-	for (int i = 0; i != 4; ++i)
-		delete[] mas2d[i];
-
-	delete [] mas2d;
+	multilist_mat2d<int>(mat2d, N, M);
 }
 
 int main()
