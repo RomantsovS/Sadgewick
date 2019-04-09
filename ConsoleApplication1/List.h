@@ -255,6 +255,42 @@ void print_mat2d(T** mat2d, size_t r, size_t c)
 }
 
 template<typename T>
+class Matrix2d
+{
+public:
+	Matrix2d(size_t r, size_t c) : data(r)
+	{
+		for (auto &row : data)
+		{
+			row.resize(c);
+		}
+	}
+
+	Matrix2d(size_t r, size_t c, T val) : Matrix2d(r, c)
+	{
+		for (auto &row : data)
+			for (auto &col : row)
+				col = val;
+	}
+
+	void print() const
+	{
+		for (auto &row : data)
+		{
+			for (auto &col : row)
+				cout << col << " ";
+			cout << endl;
+		}
+	}
+private:
+	std::vector<std::vector<T>> data;
+};
+
+template<typename T> class multilist_mat2d;
+
+template<typename T> multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<T> &r);
+
+template<typename T>
 class multilist_mat2d
 {
 private:
@@ -282,13 +318,15 @@ private:
 			t = t->dimensions[index];
 		}
 	}
+
+	friend multilist_mat2d operator*(const multilist_mat2d<T> &l, const multilist_mat2d<T> &r);
 public:
 	multilist_mat2d(size_t r, size_t c) : rows(r, nullptr), cols(c, nullptr) {}
 	multilist_mat2d(T **mat, size_t r, size_t c) : rows(r, nullptr), cols(c, nullptr)
 	{
 		for (size_t i = 0; i != r; ++i)
 		{
-			auto & cur_rows_ptr = rows[i];
+			auto &cur_rows_ptr = rows[i];
 
 			for (size_t j = 0; j != c; ++j)
 			{
@@ -302,14 +340,24 @@ public:
 						cur_rows_ptr = node;
 					else
 					{
-						cur_rows_ptr->dimensions[0] = node;
+						auto cur_rows_ptr_tmp = cur_rows_ptr.get();
+
+						while (cur_rows_ptr_tmp->dimensions[0])
+							cur_rows_ptr_tmp = cur_rows_ptr_tmp->dimensions[0].get();
+
+						cur_rows_ptr_tmp->dimensions[0] = node;
 					}
 
 					if (!cur_cols_ptr)
 						cur_cols_ptr = node;
 					else
 					{
-						cur_cols_ptr->dimensions[1] = node;
+						auto cur_cols_ptr_tmp = cur_cols_ptr.get();
+
+						while (cur_cols_ptr_tmp->dimensions[1])
+							cur_cols_ptr_tmp = cur_cols_ptr_tmp->dimensions[1].get();
+
+						cur_cols_ptr_tmp->dimensions[1] = node;
 					}
 				}
 			}
@@ -322,15 +370,27 @@ public:
 		{
 			if (*row_iter)
 			{
-				auto cur_node = *row_iter;
+				auto cur_row_node = *row_iter;
 
 				for (auto col_iter = cols.begin(); col_iter != cols.end(); ++col_iter)
 				{
-					if (cur_node && cur_node == *col_iter)
+					if (cur_row_node)
 					{
-						cout << cur_node->item;
-						
-						cur_node = cur_node->dimensions[0];
+						auto cur_col_node = *col_iter;
+
+						while (cur_col_node && cur_col_node != cur_row_node)
+							cur_col_node = cur_col_node->dimensions[1];
+
+						if (cur_row_node == cur_col_node)
+						{
+							cout << cur_row_node->item;
+
+							cur_row_node = cur_row_node->dimensions[0];
+						}
+						else
+						{
+							cout << 0;
+						}
 					}
 					else
 					{
@@ -350,5 +410,57 @@ public:
 		}
 	}
 };
+
+template<typename T>
+multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<T> &r)
+{
+	if (l.cols.size() != r.rows.size())
+		throw std::invalid_argument("Num cols of left matrix != num wors of right!\n");
+
+	multilist_mat2d<T> res(l.rows.size(), r.cols.size());
+
+	for (auto row_iter = l.rows.begin(); row_iter != l.rows.end(); ++row_iter)
+	{
+		if (*row_iter)
+		{
+			auto cur_row_node = *row_iter;
+
+			for (auto col_iter = l.cols.begin(); col_iter != l.cols.end(); ++col_iter)
+			{
+				if (cur_row_node)
+				{
+					auto cur_col_node = *col_iter;
+
+					while (cur_col_node && cur_col_node != cur_row_node)
+						cur_col_node = cur_col_node->dimensions[1];
+
+					if (cur_row_node == cur_col_node)
+					{
+						cout << cur_row_node->item;
+
+						cur_row_node = cur_row_node->dimensions[0];
+					}
+					else
+					{
+						cout << 0;
+					}
+				}
+				else
+				{
+					cout << 0;
+				}
+
+				cout << " ";
+			}
+		}
+		else
+		{
+			for (size_t i = 0; i != l.cols.size(); ++i)
+				cout << 0 << " ";
+		}
+
+		cout << endl;
+	}
+}
 
 #endif

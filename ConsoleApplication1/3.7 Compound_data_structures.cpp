@@ -200,13 +200,57 @@ void ex_3_66()
 	multilist_mat2d<int> m_list(mat2d, N, M);
 
 	m_list.print();
+
+	for (int i = 0; i < N; ++i)
+		delete[] mat2d[i];
+
+	delete[] mat2d;
+}
+
+void ex_3_67()
+{
+	size_t N = 4, M = 8;
+
+	Matrix2d<int> mat2d(N, M, 0);
+
+	/*for (size_t i = 0; i != N; ++i)
+	{
+		mat2d[rand() % N][rand() % M] = i + 1;
+	}*/
+
+	mat2d.print();
+
+	cout << "----------" << endl;
+
+	/*multilist_mat2d<int> m_list(mat2d, N, M);
+
+	m_list.print();*/
+
+	cout << "-----------------------" << endl;
+
+	N = 8, M = 3;
+
+	mat2d = Matrix2d<int>(N, M, 0);
+
+	/*for (size_t i = 0; i != N; ++i)
+	{
+		mat2d[rand() % N][rand() % M] = i + 1;
+	}*/
+
+	mat2d.print();
+
+	/*cout << "---------" << endl;
+
+	multilist_mat2d<int> m_list2(mat2d, N, M);
+
+	m_list2.print();*/
 }
 
 int main()
 {
 	for (size_t i = 0; i < 1; ++i)
 	{
-		ex_3_66();
+		ex_3_67();
 	}
 
 	cout << "press any key to exit\n";
