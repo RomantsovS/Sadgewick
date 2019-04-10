@@ -210,47 +210,47 @@ void ex_3_66()
 
 void ex_3_67()
 {
-	size_t N = 4, M = 8;
+	size_t N = 4, M = 7;
 
 	Matrix2d<int> mat2d1(N, M, 0);
 
-	/*for (size_t i = 0; i != N; ++i)
+	for (size_t i = 0; i != N; ++i)
 	{
-		mat2d[rand() % N][rand() % M] = i + 1;
-	}*/
+		mat2d1.data[rand() % N][rand() % M] = i + 1;
+	}
 
 	mat2d1.print();
 
-	/*cout << "----------" << endl;
+	cout << "----------" << endl;
 
-	multilist_mat2d<int> m_list(mat2d, N, M);
+	multilist_mat2d<int> m_list1(mat2d1);
 
-	m_list.print();*/
+	m_list1.print();
 
 	cout << "-----------------------" << endl;
 
-	N = 8, M = 3;
+	N = 7, M = 3;
 
-	auto mat2d2 = Matrix2d<int>(N, M, 0);
+	auto mat2d2 = malloc2d<int>(N, M);
 
-	/*for (size_t i = 0; i != N; ++i)
+	for (size_t i = 0; i != N; ++i)
 	{
-		mat2d[rand() % N][rand() % M] = i + 1;
-	}*/
+		mat2d2[rand() % N][rand() % M] = i + 1;
+	}
 
-	mat2d2.print();
+	print_mat2d(mat2d2, N, M);
 
-	/*cout << "---------" << endl;
+	cout << "---------" << endl;
 
-	multilist_mat2d<int> m_list2(mat2d, N, M);
+	multilist_mat2d<int> m_list2(mat2d2, N, M);
 
-	m_list2.print();*/
+	m_list2.print();
 
 	cout << "-----------------------" << endl;
 
-	auto mat2d3 = mat2d1 * mat2d2;
+	auto m_list3 = m_list1 * m_list2;
 
-	mat2d3.print();
+	//m_list3.print();
 }
 
 int main()
