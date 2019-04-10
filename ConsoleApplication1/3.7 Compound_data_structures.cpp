@@ -25,6 +25,7 @@
 
 #include "Point.h"
 #include "List.h"
+#include "Matrix.h"
 
 using std::cout;
 using std::cin;
@@ -211,18 +212,18 @@ void ex_3_67()
 {
 	size_t N = 4, M = 8;
 
-	Matrix2d<int> mat2d(N, M, 0);
+	Matrix2d<int> mat2d1(N, M, 0);
 
 	/*for (size_t i = 0; i != N; ++i)
 	{
 		mat2d[rand() % N][rand() % M] = i + 1;
 	}*/
 
-	mat2d.print();
+	mat2d1.print();
 
-	cout << "----------" << endl;
+	/*cout << "----------" << endl;
 
-	/*multilist_mat2d<int> m_list(mat2d, N, M);
+	multilist_mat2d<int> m_list(mat2d, N, M);
 
 	m_list.print();*/
 
@@ -230,20 +231,26 @@ void ex_3_67()
 
 	N = 8, M = 3;
 
-	mat2d = Matrix2d<int>(N, M, 0);
+	auto mat2d2 = Matrix2d<int>(N, M, 0);
 
 	/*for (size_t i = 0; i != N; ++i)
 	{
 		mat2d[rand() % N][rand() % M] = i + 1;
 	}*/
 
-	mat2d.print();
+	mat2d2.print();
 
 	/*cout << "---------" << endl;
 
 	multilist_mat2d<int> m_list2(mat2d, N, M);
 
 	m_list2.print();*/
+
+	cout << "-----------------------" << endl;
+
+	auto mat2d3 = mat2d1 * mat2d2;
+
+	mat2d3.print();
 }
 
 int main()

@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="List.h" />
+    <ClInclude Include="Matrix.h" />
     <ClInclude Include="Point.h" />
   </ItemGroup>
   <ItemGroup>
