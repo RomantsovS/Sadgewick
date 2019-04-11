@@ -247,16 +247,88 @@ multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<
 	if (l.cols.size() != r.rows.size())
 		throw std::invalid_argument("Num cols of left matrix != num rows of right!\n");
 
-	multilist_mat2d<T> res(l.rows.size(), r.cols.size(), 0);
+	multilist_mat2d<T> res(l.rows.size(), r.cols.size());
 
 	for (size_t i = 0; i != res.rows.size(); ++i)
 	{
+		auto cur_rows_node = res.rows[i].get();
+		auto cur_l_rows_node = l.rows[i].get();
+
 		for (size_t j = 0; j != res.cols.size(); ++j)
 		{
-			for (size_t ii = 0; ii != l.cols.size(); ++ii)
+			auto cur_cols_node = res.cols[j].get();
+			auto cur_r_cols_node = r.cols[j].get();
+
+			T res_val = 0;
+
+			while (cur_l_rows_node)
 			{
-				
-				res.data[i][j] += l.data[i][ii] * r.data[ii][j];
+				T left_val = 0;
+
+				for (auto &cur_l_cols_node : l.cols)
+				{
+					if (cur_l_rows_node)
+					{
+						while (cur_l_cols_node && cur_l_cols_node.get() != cur_l_rows_node)
+							cur_l_cols_node = cur_l_cols_node->dimensions[1];
+
+						if (cur_l_cols_node = cur_l_rows_node)
+						{
+							left_val = cur_l_cols_node.item;
+							cur_l_rows_node = cur_l_rows_node->dimensions[0].get();
+						}
+					}
+				}
+
+				if (!left_val)
+					continue;
+
+				T right_val = 0;
+
+				for (auto &cur_r_rows_node : r.rows)
+				{
+					if (cur_r_cols_node)
+					{
+						while (cur_r_rows_node && cur_r_rows_node.get() != cur_r_cols_node)
+							cur_r_rows_node = cur_r_rows_node->dimensions[1];
+
+						if (cur_r_rows_node = cur_r_cols_node)
+						{
+							right_val = cur_r_rows_node.item;
+							cur_r_cols_node = cur_r_cols_node->dimensions[1].get();
+						}
+					}
+				}
+
+				if (right_val)
+					res_val += left_val * right_val;
+			}
+
+			if (res_val)
+			{
+				auto node = std::make_shared<multilist_mat2d<T>::node_multi_dimension<T>>(res_val);
+
+				if (!cur_rows_node)
+				{
+					res.rows[i] = node;
+					cur_rows_node = node->get();
+				}
+				else
+				{
+					node->dimensions[0] = cur_rows_node->dimensions[0];
+					cur_rows_node = node;
+				}
+
+				if (!cur_cols_node)
+				{
+					res.cols[i] = node;
+					cur_cols_node = node->get();
+				}
+				else
+				{
+					node->dimensions[1] = cur_cols_node->dimensions[1];
+					cur_cols_node = node;
+				}
 			}
 		}
 	}
