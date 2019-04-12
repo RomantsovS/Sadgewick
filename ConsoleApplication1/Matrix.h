@@ -251,83 +251,96 @@ multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<
 
 	for (size_t i = 0; i != res.rows.size(); ++i)
 	{
+		if (!l.rows[i])
+			continue;
+
 		auto cur_rows_node = res.rows[i].get();
 		auto cur_l_rows_node = l.rows[i].get();
 
 		for (size_t j = 0; j != res.cols.size(); ++j)
 		{
+			if (!r.cols[j])
+				continue;
+
 			auto cur_cols_node = res.cols[j].get();
 			auto cur_r_cols_node = r.cols[j].get();
 
 			T res_val = 0;
 
-			while (cur_l_rows_node)
+			for (size_t ii = 0; ii != l.cols.size(); ++i)
 			{
-				T left_val = 0;
+				auto cur_l_cols_node = l.cols[ii];
 
-				for (auto &cur_l_cols_node : l.cols)
+				while (cur_l_rows_node)
 				{
-					if (cur_l_rows_node)
-					{
-						while (cur_l_cols_node && cur_l_cols_node.get() != cur_l_rows_node)
-							cur_l_cols_node = cur_l_cols_node->dimensions[1];
+					T left_val = 0;
 
-						if (cur_l_cols_node = cur_l_rows_node)
+					for (auto &cur_l_cols_ptr : l.cols)
+					{
+						if (cur_l_rows_node)
 						{
-							left_val = cur_l_cols_node.item;
-							cur_l_rows_node = cur_l_rows_node->dimensions[0].get();
+							auto cur_l_col_node = *cur_l_cols_ptr;
+
+							while (cur_l_col_node && cur_l_col_node.get() != cur_l_rows_node)
+								cur_l_col_node = cur_l_col_node->dimensions[1].get();
+
+							if (cur_l_col_node == cur_l_rows_node)
+							{
+								left_val = cur_l_col_node->item;
+								cur_l_rows_node = cur_l_rows_node->dimensions[0].get();
+							}
 						}
 					}
-				}
 
-				if (!left_val)
-					continue;
+					if (!left_val)
+						continue;
 
-				T right_val = 0;
+					T right_val = 0;
 
-				for (auto &cur_r_rows_node : r.rows)
-				{
-					if (cur_r_cols_node)
+					for (auto &cur_r_rows_ptr : r.rows)
 					{
-						while (cur_r_rows_node && cur_r_rows_node.get() != cur_r_cols_node)
-							cur_r_rows_node = cur_r_rows_node->dimensions[1];
-
-						if (cur_r_rows_node = cur_r_cols_node)
+						if (cur_r_cols_node)
 						{
-							right_val = cur_r_rows_node.item;
-							cur_r_cols_node = cur_r_cols_node->dimensions[1].get();
+							while (cur_r_rows_ptr && cur_r_rows_ptr.get() != cur_r_cols_node)
+								cur_r_rows_ptr = cur_r_rows_ptr->dimensions[1];
+
+							if (cur_r_rows_ptr.get() == cur_r_cols_node)
+							{
+								right_val = cur_r_rows_ptr->item;
+								cur_r_cols_node = cur_r_cols_node->dimensions[1].get();
+							}
 						}
 					}
+
+					if (right_val)
+						res_val += left_val * right_val;
 				}
 
-				if (right_val)
-					res_val += left_val * right_val;
-			}
+				if (res_val)
+				{
+					auto node = std::make_shared<multilist_mat2d<T>::node_multi_dimension<T>>(res_val);
 
-			if (res_val)
-			{
-				auto node = std::make_shared<multilist_mat2d<T>::node_multi_dimension<T>>(res_val);
+					if (!cur_rows_node)
+					{
+						res.rows[i] = node;
+						cur_rows_node = node.get();
+					}
+					else
+					{
+						node->dimensions[0] = cur_rows_node->dimensions[0];
+						cur_rows_node = node.get();
+					}
 
-				if (!cur_rows_node)
-				{
-					res.rows[i] = node;
-					cur_rows_node = node->get();
-				}
-				else
-				{
-					node->dimensions[0] = cur_rows_node->dimensions[0];
-					cur_rows_node = node;
-				}
-
-				if (!cur_cols_node)
-				{
-					res.cols[i] = node;
-					cur_cols_node = node->get();
-				}
-				else
-				{
-					node->dimensions[1] = cur_cols_node->dimensions[1];
-					cur_cols_node = node;
+					if (!cur_cols_node)
+					{
+						res.cols[i] = node;
+						cur_cols_node = node.get();
+					}
+					else
+					{
+						node->dimensions[1] = cur_cols_node->dimensions[1];
+						cur_cols_node = node.get();
+					}
 				}
 			}
 		}
