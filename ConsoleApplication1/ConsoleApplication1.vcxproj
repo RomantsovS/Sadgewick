@@ -22,9 +22,10 @@
     <ClInclude Include="List.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Stack.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-Abstract_data_types\4.0-Abstract_data_types.cpp" />
+    <ClCompile Include="04-Abstract_data_types\4.03-Examples_of_stack_adt_clients.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

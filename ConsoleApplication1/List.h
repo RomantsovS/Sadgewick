@@ -256,8 +256,6 @@ private:
 	std::shared_ptr<node<T>> curr;
 };
 
-#endif
-
 template<typename T>
 inline void CList<T>::insert(std::shared_ptr<node<T>> dest, std::shared_ptr<node<T>> ptr)
 {
@@ -319,3 +317,5 @@ inline void CList<T>::print(std::shared_ptr<node<T>> curr_ptr)
 
 	cout << endl;
 }
+
+#endif

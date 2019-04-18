@@ -24,9 +24,12 @@
     <ClInclude Include="Matrix.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Stack.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-Abstract_data_types\4.0-Abstract_data_types.cpp">
+    <ClCompile Include="04-Abstract_data_types\4.03-Examples_of_stack_adt_clients.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
