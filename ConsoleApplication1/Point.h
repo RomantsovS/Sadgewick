@@ -5,15 +5,34 @@
 #include <math.h>
 #include <vector>
 
+using std::cout;
+using std::endl;
+
 float randF()
 {
 	return 1.0f * rand() / RAND_MAX;
 }
 
+template<typename T, size_t N> class Point;
+
+template<typename T, size_t N> bool operator==(const Point<T, N> &a, const Point<T, N> &b);
+template<typename T, size_t N> bool operator!=(const Point<T, N> &a, const Point<T, N> &b);
+template<typename T, size_t N> std::ostream& operator<<(std::ostream &os, const Point<T, N> &b);
+
+template<typename T, size_t N> float distance(const Point<T, N> &p1, const Point<T, N> &p2);
+
 template <typename T, size_t N>
-struct Point
+class Point
 {
+	friend bool operator==<T>(const Point &a, const Point &b);
+	friend bool operator!=<T>(const Point &a, const Point &b);
+
+	friend std::ostream& operator<<<T>(std::ostream &os, const Point<T, N> &b);
+
+	friend float distance<T>(const Point<T, N> &p1, const Point<T, N> &p2);
+public:
 	Point() : pos(N) {}
+
 	void InitRandom()
 	{
 		for (size_t i = 0; i != N; ++i)
@@ -21,7 +40,7 @@ struct Point
 			pos[i] = randF();
 		}
 	}
-
+private:
 	std::vector<T> pos;
 };
 
@@ -46,3 +65,28 @@ float distance(const Point<T, N> &p1, const Point<T, N> &p2)
 }
 
 #endif
+
+template<typename T, size_t N>
+inline bool operator==(const Point<T, N> & a, const Point<T, N> & b)
+{
+	return distance(a, b) < 0.001;
+}
+
+template<typename T, size_t N>
+inline bool operator!=(const Point<T, N> & a, const Point<T, N> & b)
+{
+	return !(a == b);
+}
+
+template<typename T, size_t N>
+inline std::ostream & operator<<<T>(std::ostream & os, const Point<T, N>& b)
+{
+	for (const auto p : b.pos)
+	{
+		cout << p << " ";
+	}
+
+	cout << endl;
+
+	return os;
+}

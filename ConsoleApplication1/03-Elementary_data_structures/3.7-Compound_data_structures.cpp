@@ -86,6 +86,39 @@ void ex_3_18()
 		adj[i][j] = 1;
 		adj[j][i] = 1;
 	}
+
+	print_mat2d(adj, V, V);
+}
+
+void ex_3_19()
+{
+	const size_t V = 10;
+
+	int i, j;
+	link<int> adv[V];
+
+	for (i = 0; i != V; ++i)
+		adv[i] = nullptr;
+
+	while (cin >> i >> j)
+	{
+		adv[j] = new node<int>(i, adv[j]);
+		adv[i] = new node<int>(j, adv[i]);
+	}
+
+	for (i = 0; i != V; ++i)
+	{
+		cout << i << " ";
+
+		auto ptr = adv[i];
+
+		while (ptr)
+		{
+			cout << ptr->item << " ";
+			ptr = ptr->next;
+		}
+		cout << endl;
+	}
 }
 
 static link<Point<float, 2>> **grid;
@@ -210,54 +243,171 @@ void ex_3_66()
 
 void ex_3_67()
 {
-	size_t N = 4, M = 7;
+	//srand(static_cast<unsigned>(time(0)));
 
-	Matrix2d<int> mat2d1(N, M, 0);
+	size_t N1 = rand() % 20, M = rand() % 20, num_repeats = 1000, M2 = rand() % 20, percent_filling = 10;
 
-	for (size_t i = 0; i != N; ++i)
+	Matrix2d<int> mat2d1(N1, M, 0);
+
+	for (size_t i = 0; i != N1 * M * percent_filling / 100; ++i)
 	{
-		mat2d1.data[rand() % N][rand() % M] = i + 1;
+		mat2d1.data[rand() % N1][rand() % M] = i + 1;
 	}
 
-	mat2d1.print();
+	if(num_repeats == 1)
+	{
+		mat2d1.print();
+		cout << "----------" << endl;
+	}
 
-	cout << "----------" << endl;
+	Matrix2d<int> mat2d2(M, M2, 0);
+
+	for (size_t i = 0; i != M * M * percent_filling / 100; ++i)
+	{
+		mat2d2.data[rand() % M][rand() % M2] = i + 1;
+	}
+
+	if (num_repeats == 1)
+	{
+		mat2d2.print();
+		cout << "----------" << endl;
+	}
+
+	auto start_time = clock();
+
+	for (size_t cnt = 0; cnt != num_repeats; ++cnt)
+	{
+		auto mat2d3 = mat2d1 * mat2d2;
+		
+		if (num_repeats == 1)
+		{
+			mat2d3.print();
+		}
+	}
+
+	auto end_time = clock();
+	cout << "elasped time " << (end_time - start_time) / static_cast<double>(CLOCKS_PER_SEC) << endl;
+
+	if (num_repeats == 1)
+	{
+		cout << "-----------------------" << endl;
+	}
 
 	multilist_mat2d<int> m_list1(mat2d1);
 
-	m_list1.print();
-
-	cout << "-----------------------" << endl;
-
-	N = 7, M = 3;
-
-	auto mat2d2 = malloc2d<int>(N, M);
-
-	for (size_t i = 0; i != N; ++i)
+	if (num_repeats == 1)
 	{
-		mat2d2[rand() % N][rand() % M] = i + 1;
+		m_list1.print();
+		cout << "---------" << endl;
 	}
 
-	print_mat2d(mat2d2, N, M);
+	multilist_mat2d<int> m_list2(mat2d2);
 
-	cout << "---------" << endl;
+	if (num_repeats == 1)
+	{
+		m_list2.print();
+		cout << "---------" << endl;
+	}
 
-	multilist_mat2d<int> m_list2(mat2d2, N, M);
+	start_time = clock();
 
-	m_list2.print();
+	for (size_t cnt = 0; cnt != num_repeats; ++cnt)
+	{
+		auto m_list3 = m_list1 * m_list2;
 
-	cout << "-----------------------" << endl;
+		if (num_repeats == 1)
+		{
+			m_list3.print();
+		}
+	}
 
-	auto m_list3 = m_list1 * m_list2;
+	end_time = clock();
+	cout << "elasped time " << (end_time - start_time) / static_cast<double>(CLOCKS_PER_SEC) << endl;
+}
 
-	//m_list3.print();
+void ex_3_70()
+{
+	const size_t V = 10;
+	int i, j, adj[V][V];
+
+	for (i = 0; i != V; ++i)
+		for (j = 0; j != V; ++j)
+			adj[i][j] = 0;
+
+	while (cin >> i >> j)
+	{
+		adj[i][j] = 1;
+	}
+
+	print_mat2d(adj, V, V);
+
+	cin.clear();
+
+	link<int> adv[V];
+
+	for (i = 0; i != V; ++i)
+		adv[i] = nullptr;
+
+	while (cin >> i >> j)
+	{
+		adv[i] = new node<int>(j, adv[i]);
+	}
+
+	for (i = 0; i != V; ++i)
+	{
+		cout << i << "->";
+
+		auto ptr = adv[i];
+
+		while (ptr)
+		{
+			cout << ptr->item << "->";
+			ptr = ptr->next;
+		}
+		cout << endl;
+	}
+}
+
+void ex_3_73()
+{
+	const size_t V = 10;
+	int i, j, adj[V][V];
+
+	for (i = 0; i != V; ++i)
+		for (j = 0; j != V; ++j)
+			adj[i][j] = 0;
+
+	while (cin >> i >> j)
+	{
+		adj[i][j] = 1;
+	}
+
+	print_mat2d(adj, V, V);
+
+	cin.clear();
+
+	int a, b;
+
+	cin >> a >> b;
+
+	size_t cnt = 0;
+
+	for (i = 0; i != V; ++i)
+	{
+		if (adj[a][i] && adj[i][b])
+		{
+			++cnt;
+		}
+	}
+
+	cout << cnt << endl;
 }
 
 int main()
 {
 	for (size_t i = 0; i < 1; ++i)
 	{
-		ex_3_67();
+		ex_3_73();
 	}
 
 	cout << "press any key to exit\n";

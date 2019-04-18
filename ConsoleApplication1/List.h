@@ -216,4 +216,106 @@ void sort_list(link<T> &a)
 	a = b;
 }
 
+template<typename T> class CList;
+
+template<typename T>
+class CList
+{
+public:
+	template<typename T>
+	struct node
+	{
+		node() : next(nullptr) {}
+		node(T x, std::shared_ptr<node> t = nullptr) : item(x), next(t) {}
+
+		T item;
+		std::shared_ptr<node> next;
+	};
+
+	CList() : head(nullptr), curr(head) {}
+
+	std::shared_ptr<node<T>> &get_head()
+	{
+		return head;
+	}
+
+	void insert(std::shared_ptr<node<T>> x, std::shared_ptr<node<T>> t);
+	void emplace(T val, std::shared_ptr<node<T>> t = nullptr);
+
+	void remove(std::shared_ptr<node<T>> x);
+
+	bool empty();
+	std::shared_ptr<node<T>> next(std::shared_ptr<node<T>> t)
+	{
+		return t->next;
+	}
+
+	void print(std::shared_ptr<node<T>> curr_ptr = nullptr);
+private:
+	std::shared_ptr<node<T>> head;
+	std::shared_ptr<node<T>> curr;
+};
+
 #endif
+
+template<typename T>
+inline void CList<T>::insert(std::shared_ptr<node<T>> dest, std::shared_ptr<node<T>> ptr)
+{
+	ptr->next = dest->next;
+	dest->next = ptr;
+}
+
+template<typename T>
+inline void CList<T>::emplace(T val, std::shared_ptr<node<T>> t)
+{
+	if (!t)
+		t = curr;
+
+	auto ptr = std::make_shared<node<T>>(val);
+
+	if (empty())
+		ptr->next = curr = head = ptr;
+	else
+	{
+		ptr->next = curr->next;
+		curr->next = ptr;
+		curr = ptr;
+	}
+}
+
+template<typename T>
+inline void CList<T>::remove(std::shared_ptr<node<T>> x)
+{
+	auto t = x->next;
+
+	if (x->next == head)
+		head = t->next;
+
+	x->next = t->next;
+}
+
+template<typename T>
+inline bool CList<T>::empty()
+{
+	return !head;
+}
+
+template<typename T>
+inline void CList<T>::print(std::shared_ptr<node<T>> curr_ptr)
+{
+	if (empty())
+		cout << "list is empty\n";
+
+	if (!curr_ptr)
+		curr_ptr = head;
+
+	auto start = curr_ptr;
+
+	do
+	{
+		cout << curr_ptr->item << " ";
+		curr_ptr = curr_ptr->next;
+	} while (curr_ptr != start);
+
+	cout << endl;
+}

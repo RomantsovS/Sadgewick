@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <iostream>
+#include <iomanip>
 
 using std::cout;
 using std::endl;
@@ -34,7 +35,7 @@ T ***malloc3d(int r, int c, int b)
 }
 
 template<typename T>
-void print_mat2d(T** mat2d, size_t r, size_t c)
+void print_mat2d(T mat2d, size_t r, size_t c)
 {
 	for (size_t i = 0; i != r; ++i)
 	{
@@ -73,7 +74,7 @@ public:
 		for (auto &row : data)
 		{
 			for (auto &col : row)
-				cout << col << " ";
+				cout << std::setw(2) << col << " ";
 			cout << endl;
 		}
 	}
@@ -170,18 +171,18 @@ public:
 
 						if (cur_row_node == cur_col_node)
 						{
-							cout << cur_row_node->item;
+							cout << std::setw(2) << cur_row_node->item;
 
 							cur_row_node = cur_row_node->dimensions[0];
 						}
 						else
 						{
-							cout << 0;
+							cout << std::setw(2) << 0;
 						}
 					}
 					else
 					{
-						cout << 0;
+						cout << std::setw(2) << 0;
 					}
 
 					cout << " ";
@@ -190,7 +191,7 @@ public:
 			else
 			{
 				for (size_t i = 0; i != cols.size(); ++i)
-					cout << 0 << " ";
+					cout << std::setw(2) << 0 << " ";
 			}
 
 			cout << endl;
@@ -255,7 +256,6 @@ multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<
 			continue;
 
 		auto cur_rows_node = res.rows[i].get();
-		auto cur_l_rows_node = l.rows[i].get();
 
 		for (size_t j = 0; j != res.cols.size(); ++j)
 		{
@@ -263,33 +263,34 @@ multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<
 				continue;
 
 			auto cur_cols_node = res.cols[j].get();
-			auto cur_r_cols_node = r.cols[j].get();
 
 			T res_val = 0;
 
-			for (size_t ii = 0; ii != l.cols.size(); ++i)
+			for (size_t ii = 0; ii != l.cols.size(); ++ii)
 			{
-				auto cur_l_cols_node = l.cols[ii];
+				auto cur_l_rows_node = l.rows[i].get();
+				auto cur_l_cols_node = l.cols[ii].get();
+				
+				auto cur_r_rows_node = r.rows[ii].get();
+				auto cur_r_cols_node = r.cols[j].get();
 
-				while (cur_l_rows_node)
+				if (cur_l_rows_node && cur_l_cols_node && cur_r_rows_node && cur_r_cols_node)
 				{
 					T left_val = 0;
 
-					for (auto &cur_l_cols_ptr : l.cols)
+					while (cur_l_cols_node)
 					{
-						if (cur_l_rows_node)
+						while (cur_l_rows_node && cur_l_rows_node != cur_l_cols_node)
+							cur_l_rows_node = cur_l_rows_node->dimensions[0].get();
+
+						if (cur_l_cols_node == cur_l_rows_node)
 						{
-							auto cur_l_col_node = *cur_l_cols_ptr;
-
-							while (cur_l_col_node && cur_l_col_node.get() != cur_l_rows_node)
-								cur_l_col_node = cur_l_col_node->dimensions[1].get();
-
-							if (cur_l_col_node == cur_l_rows_node)
-							{
-								left_val = cur_l_col_node->item;
-								cur_l_rows_node = cur_l_rows_node->dimensions[0].get();
-							}
+							left_val = cur_l_cols_node->item;
+							break;
 						}
+
+						cur_l_cols_node = cur_l_cols_node->dimensions[1].get();
+						cur_l_rows_node = l.rows[i].get();
 					}
 
 					if (!left_val)
@@ -297,50 +298,52 @@ multilist_mat2d<T> operator*(const multilist_mat2d<T> &l, const multilist_mat2d<
 
 					T right_val = 0;
 
-					for (auto &cur_r_rows_ptr : r.rows)
+					while (cur_r_rows_node)
 					{
-						if (cur_r_cols_node)
-						{
-							while (cur_r_rows_ptr && cur_r_rows_ptr.get() != cur_r_cols_node)
-								cur_r_rows_ptr = cur_r_rows_ptr->dimensions[1];
+						while (cur_r_cols_node && cur_r_cols_node != cur_r_rows_node)
+							cur_r_cols_node = cur_r_cols_node->dimensions[1].get();
 
-							if (cur_r_rows_ptr.get() == cur_r_cols_node)
-							{
-								right_val = cur_r_rows_ptr->item;
-								cur_r_cols_node = cur_r_cols_node->dimensions[1].get();
-							}
+						if (cur_r_rows_node == cur_r_cols_node)
+						{
+							right_val = cur_r_rows_node->item;
+							break;
 						}
+
+						cur_r_rows_node = cur_r_rows_node->dimensions[0].get();
+						cur_r_cols_node = r.cols[j].get();
 					}
 
-					if (right_val)
+					if (left_val && right_val)
 						res_val += left_val * right_val;
+					else
+						continue;
+				}
+			}
+
+			if (res_val)
+			{
+				auto node = std::make_shared<multilist_mat2d<T>::node_multi_dimension<T>>(res_val);
+
+				if (!cur_rows_node)
+				{
+					res.rows[i] = node;
+					cur_rows_node = node.get();
+				}
+				else
+				{
+					cur_rows_node->dimensions[0] = node;
+					cur_rows_node = node.get();
 				}
 
-				if (res_val)
+				if (!cur_cols_node)
 				{
-					auto node = std::make_shared<multilist_mat2d<T>::node_multi_dimension<T>>(res_val);
-
-					if (!cur_rows_node)
-					{
-						res.rows[i] = node;
-						cur_rows_node = node.get();
-					}
-					else
-					{
-						node->dimensions[0] = cur_rows_node->dimensions[0];
-						cur_rows_node = node.get();
-					}
-
-					if (!cur_cols_node)
-					{
-						res.cols[i] = node;
-						cur_cols_node = node.get();
-					}
-					else
-					{
-						node->dimensions[1] = cur_cols_node->dimensions[1];
-						cur_cols_node = node.get();
-					}
+					res.cols[j] = node;
+					cur_cols_node = node.get();
+				}
+				else
+				{
+					cur_cols_node->dimensions[1] = node;
+					cur_cols_node = node.get();
 				}
 			}
 		}
