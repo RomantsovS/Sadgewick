@@ -123,61 +123,237 @@ void ex_4_14()
 	cout << ops.pop() << endl;
 }
 
-void ex_4_15()
+string transform_infix_to_postfix(const string &a)
 {
-	string a = "-1", res;
-
+	string res;
 	res.reserve(a.size());
 
 	Stack<char> save;
 
+	bool last_char_closing_bracket = false;
+
 	for (size_t i = 0; i != a.size(); ++i)
 	{
+		if (a[i] == ' ')
+			continue;
+
 		if (a[i] == ')')
-			res.append(1, save.pop()).append(1, ' ');
-		else if (a[i] == '+' || a[i] == '*' || a[i] == '-' || a[i] == '/')
+		{
+			while (!save.empty() && save.back() != '(')
+			{
+				res.append(1, save.pop());
+			}
+
+			if (!save.empty() && save.back() == '(')
+			{
+				save.pop();
+
+				if (!save.empty() && save.back() == '$')
+				{
+					res.append(1, save.pop());
+				}
+			}
+			last_char_closing_bracket = true;
+		}
+		else if (a[i] == '-' && !last_char_closing_bracket)
+		{
+			res += "0 ";
+
 			save.push(a[i]);
+		}
+		else if (a[i] == '(')
+		{
+			save.push(a[i]);
+		}
+		else if (a[i] == '+' || a[i] == '*' || a[i] == '/' || a[i] == '-')
+		{
+			if (!save.empty() && save.back() == '-')
+			{
+				res += save.pop();
+			}
+
+			save.push(a[i]);
+		}
+		else if (a[i] == '$')
+		{
+			save.push(a[i]);
+		}
 		else if (a[i] >= '0' && a[i] <= '9')
-			res.append(1, a[i]).append(1, ' ');
+		{
+			while(i < a.size() && a[i] >= '0' && a[i] <= '9')
+				res.append(1, a[i++]);
+
+			res.append(1, ' ');
+			--i;
+		}
+		else if (a[i] == '$')
+		{
+			save.push(a[i]);
+		}
+
+		if (a[i] != ')')
+			last_char_closing_bracket = false;
 	}
 
-	cout << res << endl;
-
-	a = res;
-
-	Stack<int> ops;
-
-	for (size_t i = 0; i != a.size(); ++i)
+	while (!save.empty())
 	{
-		if (a[i] == '+')
+		res += save.pop();
+	}
+
+	return res;
+}
+
+template<typename T>
+T calc_postfix_expression(const string &res)
+{
+	Stack<T> ops;
+
+	for (size_t i = 0; i != res.size(); ++i)
+	{
+		if (res[i] == '+')
 			ops.push(ops.pop() + ops.pop());
-		else if (a[i] == '*')
+		else if (res[i] == '*')
 			ops.push(ops.pop() * ops.pop());
-		else if (a[i] == '-')
+		else if (res[i] == '-')
 		{
 			auto second = ops.pop();
 			ops.push(ops.pop() - second);
 		}
-		else if (a[i] == '/')
+		else if (res[i] == '/')
 		{
 			auto second = ops.pop();
 			ops.push(ops.pop() / second);
 		}
-		else if (a[i] >= '0' && a[i] <= '9')
+		else if (res[i] == '$')
+		{
+			ops.push(sqrt(ops.pop()));
+		}
+		else if (res[i] >= '0' && res[i] <= '9')
 			ops.push(0);
 
-		while (a[i] >= '0' && a[i] <= '9')
-			ops.push(10 * ops.pop() + (a[i++] - '0'));
+		while (res[i] >= '0' && res[i] <= '9')
+			ops.push(10 * ops.pop() + (res[i++] - '0'));
 	}
 
-	cout << ops.pop() << endl;
+	return ops.pop();
+}
+
+void ex_4_15()
+{
+	string a = "((-(-1)) + $(((-1) * (-1))-(4 * (-1)))) / 2";
+
+	auto postfix = transform_infix_to_postfix(a);
+
+	cout << postfix << endl;
+
+	auto res = calc_postfix_expression<double>(postfix);
+
+	cout << res << endl;
+}
+
+string transform_postfix_to_infix(const string &a)
+{
+	string res;
+	res.reserve(a.size());
+
+	Stack<char> ops, res_stack;
+
+	for (size_t i = 0; i != a.size(); ++i)
+	{
+		if (a[i] == '+' || a[i] == '*' || a[i] == '-' || a[i] == '/')
+		{
+			Stack<char> temp;
+
+			while (!ops.empty() && ops.back() == ' ')
+			{
+				ops.pop();
+			}
+
+			if (res_stack.empty())
+			{
+				res_stack.push(')');
+
+				while (!ops.empty() && ops.back() != ' ')
+				{
+					res_stack.push(ops.pop());
+				}
+
+				res_stack.push(a[i]);
+
+				while (!ops.empty() && ops.back() == ' ')
+				{
+					ops.pop();
+				}
+
+				while (!ops.empty() && ops.back() != ' ')
+				{
+					res_stack.push(ops.pop());
+				}
+
+				res_stack.push('(');
+			}
+			else
+			{
+				while (!res_stack.empty())
+					temp.push(res_stack.pop());
+
+				res_stack.push(')');
+
+				while (!ops.empty() && ops.back() != ' ')
+				{
+					res_stack.push(ops.pop());
+				}
+
+				res_stack.push(a[i]);
+
+				while (!temp.empty() && temp.back() != ' ')
+				{
+					res_stack.push(temp.pop());
+				}
+
+				res_stack.push('(');
+			}
+		}
+		else if (a[i] >= '0' && a[i] <= '9')
+			ops.push(a[i]);
+		else if (a[i] == ' ')
+			ops.push(a[i]);
+	}
+
+	while (!res_stack.empty())
+	{
+		res += res_stack.pop();
+	}
+
+	return res;
+}
+
+void ex_4_18()
+{
+	string a = "-(-100 * -10)";
+
+	cout << a << endl;
+
+	auto postfix = transform_infix_to_postfix(a);
+
+	cout << postfix << " = " << calc_postfix_expression<double>(postfix) << endl;
+
+	auto infix = transform_postfix_to_infix(postfix);
+
+	cout << infix << endl;
+
+	postfix = transform_infix_to_postfix(infix);
+
+	//cout << postfix << " = " << calc_postfix_expression<double>(postfix) << endl;
+
+	cout << endl;
 }
 
 int main()
 {
 	for (size_t i = 0; i < 1; ++i)
 	{
-		ex_4_15();
+		ex_4_18();
 	}
 
 	cout << "press any key to exit\n";

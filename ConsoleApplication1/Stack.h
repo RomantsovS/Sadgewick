@@ -12,6 +12,7 @@ public:
 	Stack() {}
 
 	bool empty() const;
+	T back() const;
 
 	void push(T item);
 	T pop();
@@ -23,6 +24,12 @@ template<typename T>
 inline bool Stack<T>::empty() const
 {
 	return data.empty();
+}
+
+template<typename T>
+inline T Stack<T>::back() const
+{
+	return data.back();
 }
 
 template<typename T>
