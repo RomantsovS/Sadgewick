@@ -130,7 +130,7 @@ string transform_infix_to_postfix(const string &a)
 
 	Stack<char> save;
 
-	bool last_char_closing_bracket = false;
+	char last_letter = 0;
 
 	for (size_t i = 0; i != a.size(); ++i)
 	{
@@ -153,9 +153,8 @@ string transform_infix_to_postfix(const string &a)
 					res.append(1, save.pop());
 				}
 			}
-			last_char_closing_bracket = true;
 		}
-		else if (a[i] == '-' && !last_char_closing_bracket)
+		else if (a[i] == '-' && (last_letter == 0 || last_letter == '(' || last_letter == '-'))
 		{
 			res += "0 ";
 
@@ -180,7 +179,7 @@ string transform_infix_to_postfix(const string &a)
 		}
 		else if (a[i] >= '0' && a[i] <= '9')
 		{
-			while(i < a.size() && a[i] >= '0' && a[i] <= '9')
+			while(i < a.size() && (a[i] >= '0' && a[i] <= '9') || a[i] == '.')
 				res.append(1, a[i++]);
 
 			res.append(1, ' ');
@@ -191,8 +190,7 @@ string transform_infix_to_postfix(const string &a)
 			save.push(a[i]);
 		}
 
-		if (a[i] != ')')
-			last_char_closing_bracket = false;
+		last_letter = a[i];
 	}
 
 	while (!save.empty())
@@ -229,10 +227,28 @@ T calc_postfix_expression(const string &res)
 			ops.push(sqrt(ops.pop()));
 		}
 		else if (res[i] >= '0' && res[i] <= '9')
+		{
 			ops.push(0);
 
-		while (res[i] >= '0' && res[i] <= '9')
-			ops.push(10 * ops.pop() + (res[i++] - '0'));
+			while (res[i] >= '0' && res[i] <= '9')
+				ops.push(10 * ops.pop() + (res[i++] - '0'));
+
+			if (res[i] == '.')
+			{
+				++i;
+
+				size_t divider = 10;
+
+				while (res[i] >= '0' && res[i] <= '9')
+				{
+					ops.push(ops.pop() + std::stod(string(1, res[i])) / divider);
+
+					divider *= 10;
+
+					++i;
+				}
+			}
+		}
 	}
 
 	return ops.pop();
@@ -256,81 +272,72 @@ string transform_postfix_to_infix(const string &a)
 	string res;
 	res.reserve(a.size());
 
-	Stack<char> ops, res_stack;
+	Stack<char> ops;
+	Stack<string> res_stack;
+
+	bool number_in_stack = false;
 
 	for (size_t i = 0; i != a.size(); ++i)
 	{
+		if (a[i] == ' ')
+			number_in_stack = false;
 		if (a[i] == '+' || a[i] == '*' || a[i] == '-' || a[i] == '/')
 		{
-			Stack<char> temp;
+			string temp;
 
-			while (!ops.empty() && ops.back() == ' ')
+			temp += '(';
+
+			auto val = res_stack.pop();
+
+			temp += res_stack.pop();
+
+			temp += a[i];
+
+			temp += val;
+
+			temp += ')';
+
+			res_stack.push(temp);
+
+			number_in_stack = false;
+		}
+		else if (a[i] == '$')
+		{
+			string temp;
+
+			temp += "$(";
+
+			temp += res_stack.pop();
+
+			temp += ')';
+
+			res_stack.push(temp);
+
+			number_in_stack = false;
+		}
+		else if (a[i] >= '0' && a[i] <= '9')
+		{
+			if (number_in_stack)
 			{
-				ops.pop();
-			}
-
-			if (res_stack.empty())
-			{
-				res_stack.push(')');
-
-				while (!ops.empty() && ops.back() != ' ')
-				{
-					res_stack.push(ops.pop());
-				}
-
-				res_stack.push(a[i]);
-
-				while (!ops.empty() && ops.back() == ' ')
-				{
-					ops.pop();
-				}
-
-				while (!ops.empty() && ops.back() != ' ')
-				{
-					res_stack.push(ops.pop());
-				}
-
-				res_stack.push('(');
+				auto val = res_stack.pop();
+				res_stack.push(val + a[i]);
 			}
 			else
 			{
-				while (!res_stack.empty())
-					temp.push(res_stack.pop());
-
-				res_stack.push(')');
-
-				while (!ops.empty() && ops.back() != ' ')
-				{
-					res_stack.push(ops.pop());
-				}
-
-				res_stack.push(a[i]);
-
-				while (!temp.empty() && temp.back() != ' ')
-				{
-					res_stack.push(temp.pop());
-				}
-
-				res_stack.push('(');
+				res_stack.push(string(1, a[i]));
+				number_in_stack = true;
 			}
 		}
-		else if (a[i] >= '0' && a[i] <= '9')
-			ops.push(a[i]);
-		else if (a[i] == ' ')
-			ops.push(a[i]);
 	}
 
-	while (!res_stack.empty())
-	{
-		res += res_stack.pop();
-	}
+	res = res_stack.pop();
 
 	return res;
 }
 
 void ex_4_18()
 {
-	string a = "-(-100 * -10)";
+	string a = "((-(-1)) + $(((-1) * (-1))-(4 * (-1)))) / 2";
 
 	cout << a << endl;
 
@@ -344,7 +351,83 @@ void ex_4_18()
 
 	postfix = transform_infix_to_postfix(infix);
 
-	//cout << postfix << " = " << calc_postfix_expression<double>(postfix) << endl;
+	cout << postfix << " = " << calc_postfix_expression<double>(postfix) << endl;
+
+	cout << endl;
+}
+
+void ex_4_20()
+{
+	const string a = "x = 1; y = x + 1; ((x + y) * 3) + (4 * x) + a";
+
+	cout << a << endl;
+
+	std::map<string, double> variables;
+
+	for (size_t i = 0; i < a.size(); ++i)
+	{
+		string temp;
+		string cur_variable;
+
+		for( ; i != a.size() && a[i] != ';'; ++i)
+		{
+			if (a[i] == ' ')
+			{
+				continue;
+			}
+			else if (a[i] == '=')
+			{
+				cur_variable = temp;
+				temp = "";
+			}
+			else
+			{
+				temp += a[i];
+			}
+		}
+
+		string variable, expression = temp;
+		temp = "";
+
+		for (int j = 0; j != expression.size(); ++j)
+		{
+			if (expression[j] >= 'A' && expression[j] <= 'z')
+			{
+				variable += expression[j];
+			}
+			else
+			{
+				if (!variable.empty())
+				{
+					auto value = variables.at(variable);
+
+					temp += std::to_string(value);
+					variable = "";
+				}
+
+				temp += expression[j];
+			}
+		}
+
+		if (!variable.empty())
+		{
+			auto value = variables.at(variable);
+
+			temp += std::to_string(value);
+		}
+
+		auto postfix = transform_infix_to_postfix(temp);
+		auto value = calc_postfix_expression<double>(postfix);
+
+		if (!cur_variable.empty())
+		{
+			variables[cur_variable] = value;
+		}
+		else
+		{
+			cout << "result: " << value << endl;
+		}
+	}
 
 	cout << endl;
 }
@@ -353,7 +436,7 @@ int main()
 {
 	for (size_t i = 0; i < 1; ++i)
 	{
-		ex_4_18();
+		ex_4_20();
 	}
 
 	cout << "press any key to exit\n";
