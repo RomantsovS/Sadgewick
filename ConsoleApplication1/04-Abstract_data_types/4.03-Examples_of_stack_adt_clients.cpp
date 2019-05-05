@@ -36,7 +36,7 @@ void ex_4_05()
 {
 	string a = "5 9 8 + 4 6 * * 7 + *";
 
-	Stack<int> save;
+	Stack<int> save(100);
 
 	for (size_t i = 0; i != a.size(); ++i)
 	{
@@ -58,7 +58,7 @@ void ex_4_06()
 {
 	string a = "(5*(((9+8)*(4*6))+7))";
 
-	Stack<char> save;
+	Stack<char> save(20);
 
 	for (size_t i = 0; i <= a.size(); ++i)
 	{
@@ -79,7 +79,7 @@ void ex_4_14()
 
 	res.reserve(a.size());
 
-	Stack<char> save;
+	Stack<char> save(a.size());
 
 	for (size_t i = 0; i <= a.size(); ++i)
 	{
@@ -95,7 +95,7 @@ void ex_4_14()
 
 	a = res;
 
-	Stack<int> ops;
+	Stack<int> ops(a.size());
 
 	for (size_t i = 0; i != a.size(); ++i)
 	{
@@ -128,7 +128,7 @@ string transform_infix_to_postfix(const string &a)
 	string res;
 	res.reserve(a.size());
 
-	Stack<char> save;
+	Stack<char> save(a.size());
 
 	char last_letter = 0;
 
@@ -204,7 +204,7 @@ string transform_infix_to_postfix(const string &a)
 template<typename T>
 T calc_postfix_expression(const string &res)
 {
-	Stack<T> ops;
+	Stack<T> ops(res.size());
 
 	for (size_t i = 0; i != res.size(); ++i)
 	{
@@ -272,8 +272,8 @@ string transform_postfix_to_infix(const string &a)
 	string res;
 	res.reserve(a.size());
 
-	Stack<char> ops;
-	Stack<string> res_stack;
+	Stack<char> ops(a.size());
+	Stack<string> res_stack(a.size());
 
 	bool number_in_stack = false;
 
@@ -358,7 +358,7 @@ void ex_4_18()
 
 void ex_4_20()
 {
-	const string a = "x = 1; y = x + 1; ((x + y) * 3) + (4 * x) + a";
+	const string a = "x = 1; y = x + 1; ((x + y) * 3) + (4 * x)";
 
 	cout << a << endl;
 

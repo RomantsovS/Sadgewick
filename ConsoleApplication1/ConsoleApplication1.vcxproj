@@ -19,13 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Complex.h" />
+    <ClInclude Include="Deque.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Queue.h" />
     <ClInclude Include="Stack.h" />
+    <ClInclude Include="UF.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-Abstract_data_types\4.03-Examples_of_stack_adt_clients.cpp" />
+    <ClCompile Include="04-Abstract_data_types\4.08-First_class_adts.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
