@@ -12,6 +12,7 @@ class Complex
 private:
 	float re, im;
 public:
+	Complex() = default;
 	Complex(float x, float y) : re(x), im(y) {}
 
 	float Re() const { return re; }
@@ -34,6 +35,14 @@ public:
 
 		return *this;
 	}
+
+	Complex& operator -=(const Complex &rhs)
+	{
+		re = Re() - rhs.Re();
+		im = Im() - rhs.Im();
+
+		return *this;
+	}
 };
 
 std::ostream & operator << (std::ostream &os, const Complex &c)
@@ -42,7 +51,7 @@ std::ostream & operator << (std::ostream &os, const Complex &c)
 
 	cout.precision(3);
 
-	os << std::setw(6) << c.Re() << " " << std::setw(6) << c.Im();
+	os << std::setw(6) << c.Re() << ((c.Im() > 0) ? "+" : "") << std::setw(6) << c.Im() << "i";
 
 	return os;
 }
@@ -54,6 +63,23 @@ Complex operator + (const Complex &lhs, const Complex &rhs)
 	res += rhs;
 
 	return res;
+}
+
+Complex operator - (const Complex &lhs, const Complex &rhs)
+{
+	auto res = lhs;
+
+	res -= rhs;
+
+	return res;
+}
+
+Complex operator * (const Complex &lhs, const Complex &rhs)
+{
+	float re = lhs.Re() * rhs.Re() - lhs.Im() * rhs.Im();
+	float im = lhs.Re() * rhs.Im() + lhs.Im() * rhs.Re();
+
+	return Complex(re, im);
 }
 
 #endif

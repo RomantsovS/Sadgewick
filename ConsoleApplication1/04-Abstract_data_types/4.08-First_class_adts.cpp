@@ -163,11 +163,74 @@ void ex_4_75()
 		cout << st3.pop() << endl;
 }
 
+Complex calc_postfix_expression(const string &res)
+{
+	Stack<Complex> ops(res.size());
+
+	for (size_t i = 0; i != res.size(); ++i)
+	{
+		if (res[i] == '+' && res[i - 1] == ' ')
+			ops.push(ops.pop() + ops.pop());
+		else if (res[i] == '*')
+			ops.push(ops.pop() * ops.pop());
+		else if (res[i] == '-' && res[i - 1] == ' ')
+		{
+			auto second = ops.pop();
+			ops.push(ops.pop() - second);
+		}
+		/*else if (res[i] == '/')
+		{
+			auto second = ops.pop();
+			ops.push(ops.pop() / second);
+		}
+		else if (res[i] == '$')
+		{
+			ops.push(sqrt(ops.pop()));
+		}*/
+		else if (res[i] >= '0' && res[i] <= '9')
+		{
+			Stack<float> temp(4);
+
+			temp.push(0);
+
+			while (res[i] >= '0' && res[i] <= '9')
+				temp.push(10 * temp.pop() + (res[i++] - '0'));
+
+			int multiple = 1;
+
+			if (res[i] == '-')
+				multiple = -1;
+
+			++i;
+
+			temp.push(0);
+
+			while (res[i] >= '0' && res[i] <= '9')
+				temp.push(10 * temp.pop() + (res[i++] - '0'));
+
+			auto last = multiple * temp.pop();
+
+			ops.push(Complex(temp.pop(), last));
+		}
+	}
+
+	return ops.pop();
+}
+
+void ex_4_76()
+{
+	const string str = "1+2i 0+1i + 1-2i * 3+4i +";
+
+	auto res = calc_postfix_expression(str);
+
+	cout << res << endl;
+}
+
 int main()
 {
 	for (size_t i = 0; i < 1; ++i)
 	{
-		ex_4_75();
+		ex_4_76();
 	}
 
 	cout << "press any key to exit\n";

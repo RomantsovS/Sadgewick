@@ -39,9 +39,12 @@
     <ClInclude Include="Complex.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Poly.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-Abstract_data_types\4.08-First_class_adts.cpp">
+    <ClCompile Include="04-Abstract_data_types\4.09-Application_based_adt_example.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
