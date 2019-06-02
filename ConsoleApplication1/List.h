@@ -128,13 +128,13 @@ void printList(link<T> t)
 template <typename T>
 link<T> generateList(size_t len, T start)
 {
-	auto t = newNodeN(start);
+	auto t = newNodeN<T>(start);
 
 	auto x = t;
 
 	for (size_t i = 1; i < len; ++i)
 	{
-		x = (x->next = newNodeN(start + i));
+		x = (x->next = newNodeN<T>(start + i));
 	}
 
 	return t;
@@ -144,13 +144,13 @@ link<T> generateList(size_t len, T start)
 template <typename T>
 link<T> generateRandList(size_t len, size_t max_val)
 {
-	link t = new node(rand() % max_val, 0);
+	auto t = new node<T>(rand() % max_val, 0);
 
-	link x = t;
+	auto x = t;
 
 	for (size_t i = 1; i < len; ++i)
 	{
-		x = (x->next = new node(rand() % max_val, 0));
+		x = (x->next = new node<T>(rand() % max_val, 0));
 	}
 
 	return t;
@@ -160,13 +160,13 @@ link<T> generateRandList(size_t len, size_t max_val)
 template <typename T>
 link<T> generateCircularList(size_t len, int start)
 {
-	link t = new node(start, 0);
+	auto t = new node<T>(start, 0);
 
-	link x = t;
+	auto x = t;
 
 	for (size_t i = 1; i < len; ++i)
 	{
-		x = (x->next = new node(start + i));
+		x = (x->next = new node<T>(start + i));
 	}
 
 	x->next = t;

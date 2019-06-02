@@ -194,10 +194,10 @@ void ex_4_83()
 {
 	const int n = 1;
 
-	auto x = Poly<double>(1, 3) + Poly<double>(-12, 2) + Poly<double>(-42, 0);
+	auto x = Poly<double>(1, 100) + Poly<double>(-12, 2) + Poly<double>(-42, 0);
 	cout << x << " " << x.eval(n) << endl;
 
-	auto y = Poly<double>(1, 1) + Poly<double>(-3, 0);
+	auto y = Poly<double>(1, 10) + Poly<double>(-3, 0);
 	cout << y << " " << y.eval(n) << endl;
 
 	auto t = x / y;
@@ -205,6 +205,16 @@ void ex_4_83()
 	cout << t << " " << t.eval(n) << endl;
 
 	cout << "======================\n";
+
+	auto x2 = PolyList<double>(1, 100) + PolyList<double>(-12, 2) + PolyList<double>(-42, 0);
+	cout << x2 << " " << x2.eval(n) << endl;
+
+	auto y2 = Poly<double>(1, 10) + Poly<double>(-3, 0);
+	cout << y2 << " " << y2.eval(n) << endl;
+
+	auto t2 = x / y;
+
+	cout << t2 << " " << t2.eval(n) << endl;
 }
 
 int main()

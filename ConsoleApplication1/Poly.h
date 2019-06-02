@@ -26,9 +26,8 @@ class Poly
 	friend std::ostream & operator<<<T>(std::ostream &os, const Poly<T> &p);
 private:
 	std::vector<T> data;
-	std::vector<T> data_divider;
 public:
-	Poly (T c, double N)
+	Poly(T c, double N)
 	{
 		if (N == 0 || N >= 1)
 		{
@@ -40,9 +39,6 @@ public:
 
 			for (size_t i = 0; i != n; ++i)
 				data[i] = 0;
-
-			data_divider = std::vector<T>(1);
-			data_divider[0] = 1;
 		}
 		else
 		{
@@ -50,17 +46,10 @@ public:
 			data[0] = 1;
 
 			size_t n = static_cast<size_t>(1.0 / N);
-
-			data_divider = std::vector<T>(n + 1);
-
-			data_divider[n] = c;
-
-			for (size_t i = 0; i != n; ++i)
-				data_divider[i] = 0;
 		}
 	}
 
-	Poly(const Poly<T> &rhs) : data(rhs.data), data_divider(rhs.data_divider) 
+	Poly(const Poly<T> &rhs) : data(rhs.data)
 	{
 	}
 
@@ -159,14 +148,9 @@ inline Poly<T>& Poly<T>::operator/=(const Poly<T>& rhs)
 
 	auto cur_dividend = *this;
 
-	auto data_copy = data;
-
-	data.resize(data_copy.size() - rhs.data.size() + 1);
-	data_divider.resize(rhs.data.size());
+	data.resize(data.size() - rhs.data.size() + 1);
 
 	for (auto &val : data)
-		val = 0;
-	for (auto &val : data_divider)
 		val = 0;
 
 	while (cur_dividend.data.size() >= rhs.data.size())
@@ -220,7 +204,7 @@ inline Poly<T> Poly<T>::integr() const
 
 	for (int i = data.size() - 1; i >= 0; --i)
 	{
-		if(i > 0)
+		if (i > 0)
 			res.data[i + 1] = data[i] / i;
 		else
 			res.data[i + 1] = data[i];
@@ -306,6 +290,7 @@ template <typename T> class PolyList;
 
 template <typename T> PolyList<T> operator+(const PolyList<T> &lhs, const PolyList<T> &rhs);
 template <typename T> PolyList<T> operator*(const PolyList<T> &lhs, const PolyList<T> &rhs);
+template <typename T> PolyList<T> operator/(const PolyList<T> &lhs, const PolyList<T> &rhs);
 template <typename T> std::ostream & operator<<(std::ostream &os, const PolyList<T> &p);
 
 template <typename T>
@@ -323,8 +308,9 @@ class PolyList
 
 	friend PolyList<T> operator+<T>(const PolyList<T> &lhs, const PolyList<T> &rhs);
 	friend PolyList<T> operator*<T>(const PolyList<T> &lhs, const PolyList<T> &rhs);
+	friend PolyList<T> operator/<T>(const PolyList<T> &lhs, const PolyList<T> &rhs);
 	friend std::ostream & operator<<<T>(std::ostream &os, const PolyList<T> &p);
-private:	
+private:
 	std::shared_ptr<node> head;
 public:
 	PolyList() : head(nullptr) {}
@@ -359,6 +345,7 @@ public:
 
 	PolyList<T> & operator+=(const PolyList<T> &rhs);
 	PolyList<T> & operator*=(const PolyList<T> &rhs);
+	PolyList<T> & operator/=(const PolyList<T> &rhs);
 
 	double eval(float x) const
 	{
@@ -368,7 +355,7 @@ public:
 
 		int last_Index = ptr->_index;
 
-		while(ptr)
+		while (ptr)
 		{
 			int cur_index = ptr->_index;
 
@@ -399,7 +386,6 @@ public:
 	PolyList<T> integr() const;
 };
 
-
 template <typename T>
 PolyList<T> operator+(const PolyList<T> &lhs, const PolyList<T> &rhs)
 {
@@ -410,13 +396,22 @@ PolyList<T> operator+(const PolyList<T> &lhs, const PolyList<T> &rhs)
 	return t;
 }
 
-
 template <typename T>
 PolyList<T> operator*(const PolyList<T> &lhs, const PolyList<T> &rhs)
 {
 	PolyList<T> t(lhs);
 
 	t *= rhs;
+
+	return t;
+}
+
+template <typename T>
+PolyList<T> operator/<T>(const PolyList<T>& lhs, const PolyList<T>& rhs)
+{
+	PolyList<T> t(lhs);
+
+	t /= rhs;
 
 	return t;
 }
@@ -430,14 +425,14 @@ inline std::ostream & operator<<(std::ostream & os, const PolyList<T> & p)
 
 	while (ptr)
 	{
-		if (!first)
+		if (!first && ptr->item > 0)
 		{
 			os << '+';
 		}
 		else
 			first = false;
 
-		if(ptr->_index)
+		if (ptr->_index)
 			os << ptr->item << 'x' << '^' << ptr->_index;
 		else
 			os << ptr->item;
@@ -491,7 +486,7 @@ inline PolyList<T>& PolyList<T>::operator+=(const PolyList<T>& rhs)
 		else if (!cur_ptr_res)
 		{
 			auto t = std::make_shared<PolyList<T>::node>(ptr->item, ptr->_index, cur_ptr_res);
-			
+
 			cur_ptr_res = t;
 
 			if (last_head)
@@ -575,6 +570,51 @@ inline PolyList<T>& PolyList<T>::operator*=(const PolyList<T>& rhs)
 }
 
 template<typename T>
+inline PolyList<T>& PolyList<T>::operator/=(const PolyList<T>& rhs)
+{
+	if (this == &rhs)
+	{
+		head = std::make_shared<PolyList<T>::node>(1, 0);
+
+		return *this;
+	}
+
+	auto cur_dividend = *this;
+
+	head = nullptr;
+
+	while (cur_dividend.head._index >= rhs.head->_index)
+	{
+		auto cur_divider = rhs;
+
+		auto cur_coef = cur_dividend.head->item;
+
+		int size_dif = cur_dividend.head->_index - rhs.head->_index;
+
+		auto ptr = cur_dividend.head;
+
+		while(ptr)
+		{
+			ptr->item = ptr->item * cur_coef;
+			ptr->index += size_dif;
+
+			ptr = ptr->next;
+		}
+
+		auto index = cur_dividend.head->_index - rhs.head->_index;
+		auto cur_ptr_res = std::make_shared<PolyList<T>::node>(cur_coef, index, nullptr);
+		PolyList<T> p;
+		p.head = cur_ptr_res;
+
+		*this = *this + p;
+
+		cur_dividend = cur_dividend - cur_divider;
+	}
+
+	return *this;
+}
+
+template<typename T>
 inline PolyList<T> PolyList<T>::diff() const
 {
 	PolyList<T> res;
@@ -583,7 +623,7 @@ inline PolyList<T> PolyList<T>::diff() const
 
 	auto last_head = res.head;
 
-	while(ptr)
+	while (ptr)
 	{
 		if (ptr->_index > 1)
 		{

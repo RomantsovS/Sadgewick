@@ -30,7 +30,7 @@
     <ClInclude Include="UF.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="04-Abstract_data_types\4.09-Application_based_adt_example.cpp" />
+    <ClCompile Include="05-Recursion_and_trees\5.03-Dynamic_programming.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
