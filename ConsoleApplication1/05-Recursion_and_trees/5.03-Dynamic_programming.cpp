@@ -152,7 +152,7 @@ struct my_item
 };
 
 vector<my_item> items = { {3, 4}, {4, 5}, {7, 10}, {8, 11}, {9, 13} };
-vector<int> maxknown(18, -1);
+vector<int> maxknown(18, 0);
 vector<my_item> itemsknown(18);
 
 int f_5_48(int M)
@@ -162,7 +162,7 @@ int f_5_48(int M)
 	if (maxknown[M] != -1)
 		return maxknown[M];
 
-	for (i = 0, max = 0; i < items.size(); ++i)
+	for (i = 0, max = 0; i < static_cast<int>(items.size()); ++i)
 	{
 		if ((space = M - items[i].size) >= 0)
 		{
@@ -185,24 +185,150 @@ int f_5_48(int M)
 
 void ex_5_48()
 {
-	cout << f_5_48(17) << endl;
+	const int bag_size = 17;
 
-	for (size_t i = 0; i != 18; ++i)
+	maxknown = vector<int>(18, -1);
+
+	auto max_size = f_5_48(bag_size);
+	cout << max_size << endl;
+
+	for (size_t i = 0; i <= bag_size; ++i)
 	{
 		cout << std::setw(2) << i << " ";
 		
 		cout << std::setw(2) << maxknown[i] << " ";
 
-		cout << itemsknown[i].size << " - " << itemsknown[i].val << endl;
+		cout << itemsknown[i].size << '-' << itemsknown[i].val << endl;
 	}
+
 	cout << endl;
+
+	for (auto i = bag_size; i > 0;)
+	{
+		cout << itemsknown[i].size << '-' << itemsknown[i].val << endl;
+		i -= itemsknown[i].size;
+	}
+}
+
+void ex_5_51()
+{
+	const int bag_size = 17;
+
+	size_t max_size = 0;
+	int maxi = -1;
+
+	for (size_t i = 0; i <= bag_size; ++i)
+	{
+		size_t max = 0;
+
+		for(size_t ind = 0; ind != items.size(); ++ ind)
+		{
+			if (i == items[ind].size)
+			{
+				if (items[ind].val > max)
+				{
+					max = items[ind].val;
+					maxi = ind;
+				}
+			}
+			else if (i >= items[ind].size)
+			{
+				for (size_t j = 1; j <= i - items[ind].size; ++j)
+				{
+					if (items[ind].val + maxknown[j] > max)
+					{
+						max = items[ind].val + maxknown[j];
+						maxi = ind;
+					}
+				}
+			}
+		}
+
+		if (max)
+		{
+			maxknown[i] = max;
+			itemsknown[i] = items[maxi];
+		}
+	}
+
+	cout << max_size << endl;
+
+	for (size_t i = 0; i <= bag_size; ++i)
+	{
+		cout << std::setw(2) << i << " ";
+
+		cout << std::setw(2) << maxknown[i] << " ";
+
+		cout << itemsknown[i].size << '-' << itemsknown[i].val << endl;
+	}
+
+	cout << endl;
+
+	for (auto i = bag_size; i > 0;)
+	{
+		cout << itemsknown[i].size << '-' << itemsknown[i].val << endl;
+		i -= itemsknown[i].size;
+	}
+}
+
+int f_5_52(int M, int last_item_index)
+{
+	size_t space, max = 0, t;
+	int i, maxi = -1;
+
+	if (maxknown[M] != -1)
+		return maxknown[M];
+
+	for (i = last_item_index, max = 0; i >= 0; ++i)
+	{
+		if ((t = f_5_52(space, last_item_index - 1) + items[i].val) > max)
+		{
+			max = t;
+			maxi = i;
+		}
+	}
+
+	while(maxknown[M] <= M)
+	{
+		maxknown[M] += items[last_item_index].size;
+		itemsknown[items[last_item_index].size] = items[last_item_index];
+	}
+
+	return maxknown[M];
+}
+
+void ex_5_52()
+{
+	const int bag_size = 17;
+
+	maxknown = vector<int>(18, -1);
+
+	auto max_size = f_5_52(bag_size, items.size() - 1);
+	cout << max_size << endl;
+
+	for (size_t i = 0; i <= bag_size; ++i)
+	{
+		cout << std::setw(2) << i << " ";
+
+		cout << std::setw(2) << maxknown[i] << " ";
+
+		cout << itemsknown[i].size << '-' << itemsknown[i].val << endl;
+	}
+
+	cout << endl;
+
+	for (auto i = bag_size; i > 0;)
+	{
+		cout << itemsknown[i].size << '-' << itemsknown[i].val << endl;
+		i -= itemsknown[i].size;
+	}
 }
 
 int main()
 {
 	for (size_t i = 0; i < 1; ++i)
 	{
-		ex_5_48();
+		ex_5_52();
 	}
 
 	cout << "press any key to exit\n";
