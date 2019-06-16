@@ -27,10 +27,11 @@
     <ClInclude Include="Poly.h" />
     <ClInclude Include="Queue.h" />
     <ClInclude Include="Stack.h" />
+    <ClInclude Include="Tree.h" />
     <ClInclude Include="UF.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="05-Recursion_and_trees\5.03-Dynamic_programming.cpp" />
+    <ClCompile Include="05-Recursion_and_trees\5.07-Recursive_binary_tree_algorithms.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

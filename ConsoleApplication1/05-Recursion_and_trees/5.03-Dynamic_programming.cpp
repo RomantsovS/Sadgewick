@@ -155,6 +155,7 @@ vector<my_item> items = { {3, 4}, {4, 5}, {7, 10}, {8, 11}, {9, 13} };
 vector<int> maxknown(18, 0);
 vector<my_item> itemsknown(18);
 
+
 int f_5_48(int M)
 {
 	int i, space, max, maxi = -1, t;
@@ -271,30 +272,34 @@ void ex_5_51()
 	}
 }
 
+vector<size_t> num_items(items.size());
+
 int f_5_52(int M, int last_item_index)
 {
 	size_t space, max = 0, t;
-	int i, maxi = -1;
+	int i, max_cnt = -1;
 
-	if (maxknown[M] != -1)
-		return maxknown[M];
+	if (last_item_index < 0)
+		return 0;
+
+	if (maxknown[last_item_index] != -1)
+		return maxknown[last_item_index];
 
 	for (i = last_item_index, max = 0; i >= 0; ++i)
 	{
-		if ((t = f_5_52(space, last_item_index - 1) + items[i].val) > max)
+		auto cur_num_items = M / items[i].size;
+
+		if ((t = f_5_52(M, last_item_index - 1) + items[i].val * cur_num_items) > max)
 		{
 			max = t;
-			maxi = i;
+			max_cnt = cur_num_items;
 		}
 	}
 
-	while(maxknown[M] <= M)
-	{
-		maxknown[M] += items[last_item_index].size;
-		itemsknown[items[last_item_index].size] = items[last_item_index];
-	}
+	maxknown[last_item_index] = max;
+	num_items[last_item_index] = max_cnt;
 
-	return maxknown[M];
+	return max;
 }
 
 void ex_5_52()

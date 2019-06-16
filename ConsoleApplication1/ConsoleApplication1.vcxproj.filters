@@ -42,9 +42,12 @@
     <ClInclude Include="Poly.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Tree.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="05-Recursion_and_trees\5.03-Dynamic_programming.cpp">
+    <ClCompile Include="05-Recursion_and_trees\5.07-Recursive_binary_tree_algorithms.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
