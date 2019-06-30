@@ -47,7 +47,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="05-Recursion_and_trees\5.07-Recursive_binary_tree_algorithms.cpp">
+    <ClCompile Include="05-Recursion_and_trees\5.08-Graph_traversal.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
