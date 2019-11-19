@@ -35,7 +35,7 @@ using std::forward_list;
 using std::map;
 using std::set;
 
-constexpr size_t N = 1000;
+constexpr size_t N = 20;
 constexpr size_t max_num = 9;
 
 struct data_t
@@ -54,7 +54,7 @@ void print_mas(const int * beg, const int *end, size_t speed)
 
 	static clock_t lastClock = clock();
 
-	//system("cls");
+	system("cls");
 
 	char *p_next_write = &buffer[0];
 
@@ -66,7 +66,7 @@ void print_mas(const int * beg, const int *end, size_t speed)
 		while(iter < end)
 		{
 			if (*iter == j)
-				*p_next_write = '0' + j;
+				*p_next_write = static_cast<char>('0' + j);
 			else
 				*p_next_write = ' ';
 
@@ -77,11 +77,12 @@ void print_mas(const int * beg, const int *end, size_t speed)
 		*p_next_write++ = '\n';
 	}
 
-	std::for_each(beg, end, [&p_next_write](auto &val) {*p_next_write++ = '0' + val; });
+	std::for_each(beg, end, [&p_next_write](auto &val)
+	{*p_next_write++ = static_cast<char>('0' + val); });
 
-	//std::cout.write(&buffer[0], p_next_write - &buffer[0]);
+	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
 
-	//cout << endl;
+	cout << endl;
 
 	while (clock() - lastClock < CLOCKS_PER_SEC / 100 * static_cast<int>(speed))
 		;
@@ -95,25 +96,69 @@ void print_mas(const vector<int> &mas, size_t speed)
 
 void bubble_sort(std::vector<int> &mas, size_t speed)
 {
-	int temp = 0;
 	bool sorted = false;
 
-	while(!sorted)
+	for (size_t i = 0; i != mas.size(); ++i)
 	{
 		sorted = true;
-		for (size_t i = 0; i != mas.size() - 1; ++i)
+		for (size_t j = mas.size() - 1; j > i; --j)
 		{
 
-			if (mas[i + 1] < mas[i])
+			if (mas[j] < mas[j - 1])
 			{
-				temp = mas[i];
-				mas[i] = mas[i + 1];
-				mas[i + 1] = temp;
+				std::swap(mas[j - 1], mas[j]);
 				sorted = false;
 			}
 
 			print_mas(mas, speed);
 		}
+		if(sorted)
+			break;
+	}
+}
+
+void shaker_sort(vector<int> &mas, size_t speed)
+{
+	bool sorted = false;
+	bool forward = false;
+	
+	size_t index = 0;
+
+	for (size_t i = 0; i != mas.size() - 1; ++i)
+	{
+		sorted = true;
+
+		if (forward)
+		{
+			for (size_t j = i + 1; j < mas.size() - index; ++j)
+			{
+				if (mas[j] < mas[j - 1])
+				{
+					std::swap(mas[j], mas[j - 1]);
+					sorted = false;
+
+					print_mas(mas, speed);
+				}
+			}
+			++index;
+		}
+		else
+		{
+			for (size_t j = mas.size() - 1 - i; j > i - index; --j)
+			{
+				if (mas[j] < mas[j - 1])
+				{
+					std::swap(mas[j], mas[j - 1]);
+					sorted = false;
+
+					print_mas(mas, speed);
+				}
+			}
+		}
+		if (sorted)
+			break;
+
+		forward = !forward;
 	}
 }
 
@@ -225,6 +270,9 @@ void run_sort(data_t &data)
 	}
 
 	cout << "Elasped time: " << endTime - startTime << endl;
+
+	while (clock() - endTime < 1000)
+		;
 }
 
 int main()
@@ -241,10 +289,13 @@ int main()
 		mas[i] = u_ch(rand_eng);
 	}
 
-	vec.push_back(data_t{ mas, bubble_sort, "bubble_sort", 0 });
-	vec.push_back(data_t{ mas, selection_sort, "selection_sort", 0 });
-	vec.push_back(data_t{ mas, insertion_sort, "insertion_sort", 0 });
-	vec.push_back(data_t{ mas, quick_sort, "qsort", 0 });
+	size_t speed = 10;
+
+	vec.push_back(data_t{ mas, bubble_sort, "bubble_sort", speed / 1});
+	vec.push_back(data_t{ mas, shaker_sort, "shaker_sort", speed / 1 });
+	vec.push_back(data_t{ mas, selection_sort, "selection_sort", speed });
+	vec.push_back(data_t{ mas, insertion_sort, "insertion_sort", speed });
+	vec.push_back(data_t{ mas, quick_sort, "qsort", speed });
 
 	std::for_each(vec.begin(), vec.end(), run_sort);
 
