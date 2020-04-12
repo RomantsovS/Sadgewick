@@ -25,40 +25,6 @@
 
 #include "../Tree.h"
 
-template<typename T>
-std::shared_ptr<CTree<T>::node<T>> max(const std::vector<T> &mas, int l, int r)
-{
-	if (r < l)
-		return nullptr;
-
-	size_t m = (l + r) / 2;
-
-	auto x = std::make_shared<CTree<T>::node<T>>(mas[m]);
-
-	if (l == r)
-		return x;
-
-	x->l = max(mas, l, m);
-	x->r = max(mas, m + 1, r);
-
-	T u = x->l->item, v = x->r->item;
-
-	if (u > v)
-		x->item = u;
-	else
-		x->item = v;
-
-	return x;
-}
-
-template<typename T>
-CTree<T> generate_tree_max(const std::vector<T> &mas)
-{
-	auto node = max(mas, 0, mas.size() - 1);
-
-	return CTree<T>(node);
-}
-
 void ex_5_86()
 {
 	std::vector<char> ivec = { 'a', 'g', 'h', 't', 'y' };

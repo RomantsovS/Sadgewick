@@ -72,11 +72,12 @@ void ex_6_30()
 
 	vector<int> vec;
 
-	vector<int> mas(N);
+	vector<size_t> mas(N);
 
 	for (size_t i = 0; i != N; ++i)
 	{
 		mas[i] = u_ch(rand_eng);
+		mas[i] = N - i;
 	}
 
 	auto copy_mas = mas;

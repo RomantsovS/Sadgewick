@@ -31,7 +31,7 @@ void construct(int N)
 
 	for (size_t i = 0; i != N; ++i)
 	{
-		freelist[i].next = &freelist[i + 1];
+		freelist[i].next = &freelist<T>[i + 1];
 	}
 }
 

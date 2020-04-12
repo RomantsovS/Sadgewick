@@ -24,6 +24,8 @@
 #include <utility>
 #include <iomanip>
 
+#include "Mas.h"
+
 using std::cout;
 using std::cin;
 using std::cerr;
@@ -35,66 +37,24 @@ using std::forward_list;
 using std::map;
 using std::set;
 
-constexpr size_t N = 20;
-constexpr size_t max_num = 9;
+constexpr size_t N = 5000;
+constexpr char min_num = 'A', max_num = 'Z';
 
+template <typename T>
 struct data_t
 {
-	std::vector<int> mas;
-	std::function<void(std::vector<int> &, size_t)> func;
+	std::vector<T> mas;
+	//std::function<void(std::vector<T> &, size_t)> func;
+	void (*func)(std::vector<T>&, size_t);
 	string name;
 	size_t speed;
 };
 
-void print_mas(const int * beg, const int *end, size_t speed)
-{
-	static char buffer[(N + 1) * (max_num + 1 + 1)];
+vector<string> svec;
+size_t cnt_comparison = 0, cnt_swap = 0;
 
-	memset(&buffer[0], ' ', (N + 1) * (max_num + 1 + 1));
-
-	static clock_t lastClock = clock();
-
-	system("cls");
-
-	char *p_next_write = &buffer[0];
-
-	auto iter = beg;
-
-	for (int j = max_num; j >= 0; --j)
-	{
-		iter = beg;
-		while(iter < end)
-		{
-			if (*iter == j)
-				*p_next_write = static_cast<char>('0' + j);
-			else
-				*p_next_write = ' ';
-
-			p_next_write++;
-			++iter;
-		}
-
-		*p_next_write++ = '\n';
-	}
-
-	std::for_each(beg, end, [&p_next_write](auto &val)
-	{*p_next_write++ = static_cast<char>('0' + val); });
-
-	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
-
-	cout << endl;
-
-	while (clock() - lastClock < CLOCKS_PER_SEC / 100 * static_cast<int>(speed))
-		;
-	lastClock = clock();
-}
-
-void print_mas(const vector<int> &mas, size_t speed)
-{
-	print_mas(&mas.front(), &mas.back() + 1, speed);
-}
-
-void bubble_sort(std::vector<int> &mas, size_t speed)
+template <typename T>
+void bubble_sort(std::vector<T> &mas, size_t speed)
 {
 	bool sorted = false;
 
@@ -108,16 +68,21 @@ void bubble_sort(std::vector<int> &mas, size_t speed)
 			{
 				std::swap(mas[j - 1], mas[j]);
 				sorted = false;
-			}
+				++cnt_swap;
 
-			print_mas(mas, speed);
+				print_mas(mas, speed, "bubble_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
+			}
+			++cnt_comparison;
 		}
 		if(sorted)
 			break;
 	}
+
+	print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 }
 
-void shaker_sort(vector<int> &mas, size_t speed)
+template <typename T>
+void shaker_sort(vector<T> &mas, size_t speed)
 {
 	bool sorted = false;
 	bool forward = false;
@@ -130,29 +95,33 @@ void shaker_sort(vector<int> &mas, size_t speed)
 
 		if (forward)
 		{
-			for (size_t j = i + 1; j < mas.size() - index; ++j)
+			for (size_t j = i + 1 - index; j < mas.size() - index; ++j)
 			{
 				if (mas[j] < mas[j - 1])
 				{
 					std::swap(mas[j], mas[j - 1]);
 					sorted = false;
+					++cnt_swap;
 
-					print_mas(mas, speed);
+					print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 				}
+				++cnt_comparison;
 			}
 			++index;
 		}
 		else
 		{
-			for (size_t j = mas.size() - 1 - i; j > i - index; --j)
+			for (size_t j = mas.size() - 1 - i + index; j > i - index; --j)
 			{
 				if (mas[j] < mas[j - 1])
 				{
 					std::swap(mas[j], mas[j - 1]);
 					sorted = false;
+					++cnt_swap;
 
-					print_mas(mas, speed);
+					print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 				}
+				++cnt_comparison;
 			}
 		}
 		if (sorted)
@@ -160,9 +129,12 @@ void shaker_sort(vector<int> &mas, size_t speed)
 
 		forward = !forward;
 	}
+
+	print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 }
 
-void selection_sort(std::vector<int> &mas, size_t speed)
+template <typename T>
+void selection_sort(std::vector<T> &mas, size_t speed)
 {
 	for (size_t i = 0; i != mas.size(); ++i)
 	{
@@ -182,15 +154,16 @@ void selection_sort(std::vector<int> &mas, size_t speed)
 		mas[i] = min;
 		mas[minIndex] = tmp;
 
-		print_mas(mas, speed);
+		print_mas(mas, speed, "selection_sort");
 	}
 }
 
-void insertion_sort(std::vector<int> &mas, size_t speed)
+template <typename T>
+void insertion_sort(std::vector<T> &mas, size_t speed)
 {
 	int tmp, j;
 
-	for (size_t i = 1; i != mas.size(); ++i)
+	for (int i = 1; i != mas.size(); ++i)
 	{
 
 		tmp = mas[i];
@@ -201,20 +174,54 @@ void insertion_sort(std::vector<int> &mas, size_t speed)
 			mas[j + 1] = mas[j];
 			mas[j] = tmp;
 			j--;
+
+			print_mas(mas, speed, "insertion_sort");
 		}
 
-		print_mas(mas, speed);
+		print_mas(mas, speed, "insertion_sort");
 	}
 }
 
-void quick_sort_ranged(int *beg, int *end, size_t speed)
+template <typename T>
+void shall_sort(vector<T>& mas, size_t speed)
+{
+	int h;
+
+	for (h = 1; h <= (mas.size() - 2) / 9; h = 3 * h + 1)
+		;
+	for (; h > 0; h /= 3)
+		for (int i = h; i <= mas.size() - 1; ++i)
+		{
+			int j = i;
+			auto v = mas[i];
+
+			while (j >= h && v < mas[j - h])
+			{
+				mas[j] = mas[j - h];
+				j -= h;
+
+				++cnt_swap;
+
+				print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
+			}
+			++cnt_comparison;
+
+			mas[j] = v;
+
+			print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
+		}
+}
+
+template <typename T>
+void quick_sort_ranged(T *beg, T *end, size_t speed)
 {
 	if (end - beg < 2)
 		return;
 
 	auto p = *(beg + (end - beg) / 2);
 
-	int i = 0, j = end - beg, temp;
+	int i = 0, temp;
+	auto j = end - beg;
 
 	while (i < j)
 	{
@@ -235,20 +242,24 @@ void quick_sort_ranged(int *beg, int *end, size_t speed)
 		i++;
 		j--;
 
-		print_mas(beg, end, speed);
+		print_mas(beg, end, speed, "quick_sort_ranged");
 	}
 
 	quick_sort_ranged(beg, beg + j, speed);
 	quick_sort_ranged(beg + j + 1, end, speed);
 }
 
-void quick_sort(std::vector<int> &mas, size_t speed)
+template <typename T>
+void quick_sort(std::vector<T> &mas, size_t speed)
 {
 	quick_sort_ranged(&mas.front(), &mas.back(), speed);
 }
 
-void run_sort(data_t &data)
+template <typename T>
+void run_sort(data_t<T> &data)
 {
+	cnt_comparison = cnt_swap = 0;
+
 	cout << data.name << endl;
 
 	if (data.mas.size() <= 40)
@@ -269,35 +280,47 @@ void run_sort(data_t &data)
 		cout << endl;
 	}
 
-	cout << "Elasped time: " << endTime - startTime << endl;
+	svec.push_back("Elasped time: " + std::to_string(endTime - startTime) + " " + data.name + " " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 
-	while (clock() - endTime < 1000)
-		;
+	/*while (clock() - endTime < 1000)
+		;*/
 }
 
 int main()
 {
 	std::default_random_engine rand_eng;
-	std::uniform_int_distribution<unsigned> u_ch(0, max_num);
+	std::uniform_int_distribution<> u_ch(min_num, max_num);
 
-	vector<data_t> vec;
+	vector<data_t<char>> vec;
 
-	vector<int> mas(N);
+	vector<char> mas(N);
 
 	for (size_t i = 0; i != N; ++i)
 	{
 		mas[i] = u_ch(rand_eng);
+		//mas[i] = 'A'/* + i % (max_num - min_num + 1)*/;
 	}
 
-	size_t speed = 10;
+	size_t speed = 1;
 
-	vec.push_back(data_t{ mas, bubble_sort, "bubble_sort", speed / 1});
-	vec.push_back(data_t{ mas, shaker_sort, "shaker_sort", speed / 1 });
-	vec.push_back(data_t{ mas, selection_sort, "selection_sort", speed });
-	vec.push_back(data_t{ mas, insertion_sort, "insertion_sort", speed });
-	vec.push_back(data_t{ mas, quick_sort, "qsort", speed });
+	vec.push_back(data_t<char>{ mas, bubble_sort<char>, "bubble_sort", speed / 1});
+	vec.push_back(data_t<char>{ mas, shaker_sort<char>, "shaker_sort", speed / 1 });
+	vec.push_back(data_t<char>{ mas, selection_sort<char>, "selection_sort", speed / 1});
+	vec.push_back(data_t<char>{ mas, insertion_sort<char>, "insertion_sort", speed / 1});
+	vec.push_back(data_t<char>{ mas, quick_sort<char>, "qsort", speed / 1});
 
-	std::for_each(vec.begin(), vec.end(), run_sort);
+	std::for_each(vec.begin(), vec.end(), run_sort<char>);
+
+	/*for (auto data : vec)
+	{
+		run_sort(data);
+	}*/
+
+	system("cls");
+	for (const auto& str : svec)
+	{
+		cout << str << endl;
+	}
 
 	cout << "press any key to exit\n";
 	_getch();
