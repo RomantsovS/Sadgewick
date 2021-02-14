@@ -62,7 +62,7 @@ std::ostream & operator << (std::ostream &os, const Complex &c)
 
 	cout.precision(3);
 
-	os << std::setw(6) << c.Re() << ((c.Im() > 0) ? " +" : "") << std::setw(6) << c.Im() << "i";
+	os << std::setw(6) << c.Re() << ((c.Im() >= 0) ? " +" : "-") << std::setw(6) << c.Im() << "i";
 
 	return os;
 }

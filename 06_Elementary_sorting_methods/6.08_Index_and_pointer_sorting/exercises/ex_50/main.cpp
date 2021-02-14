@@ -1,12 +1,11 @@
 #include <iostream>
-#include <conio.h>
 #include <vector>
 #include <random>
 #include <iomanip>
 
-#include "../Mas.h"
-#include "../Complex.h"
-#include "../Sort.h"
+#include "../../../../Mas.h"
+#include "../../../../Complex.h"
+//#include "../Sort.h"
 
 struct Item {
 	char* str;
@@ -168,9 +167,6 @@ int main()
 	{
 		ex_6_14();
 	}
-
-	cout << "press any key to exit\n";
-	_getch();
 
 	return 0;
 }

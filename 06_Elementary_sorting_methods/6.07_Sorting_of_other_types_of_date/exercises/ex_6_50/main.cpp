@@ -1,11 +1,10 @@
 #include <iostream>
-#include <conio.h>
 #include <vector>
 #include <random>
 #include <iomanip>
 
-#include "../Mas.h"
-#include "../Complex.h"
+#include "../../../../Mas.h"
+#include "../../../../Complex.h"
 
 const size_t N = 20;
 constexpr int min_num = 0, max_num = 6;
@@ -34,13 +33,13 @@ void shall_sort(vector<T>& mas)
 
 				++cnt_swap;
 
-				print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
+				//print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
 			}
 			++cnt_comparison;
 
 			mas[j] = v;
 
-			print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
+			//print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
 		}
 }
 
@@ -51,17 +50,17 @@ void ex_6_50()
 	std::uniform_int_distribution<int> u_ch(min_num, max_num);
 
 	vector<Complex> mas;
-	//vector<int> mas;
 
 	for (size_t i = 0; i != N; ++i)
 	{
 		mas.emplace_back(static_cast<float>(u_ch(rand_eng)), static_cast<float>(u_ch(rand_eng)));
-		//mas.push_back(u_ch(rand_eng));
 	}
 
 	print_mas(mas);
 
 	shall_sort(mas);
+
+	cout << endl;
 
 	print_mas(mas);
 }
@@ -72,9 +71,6 @@ int main()
 	{
 		ex_6_50();
 	}
-
-	cout << "press any key to exit\n";
-	_getch();
 
 	return 0;
 }

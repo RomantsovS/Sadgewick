@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <string.h>
 
 using std::cout;
 using std::cin;
@@ -24,13 +26,15 @@ void print_mas(T max_num, T min_num, const T2* beg, const T2* end, size_t N, siz
 
 	static clock_t lastClock = clock();
 
-	std::system("clear");
+	if(std::system("clear")) {
+		
+	}
 
 	char* p_next_write = &buffer[0];
 
 	auto iter = beg;
 
-	for (int j = max_num; j >= min_num; --j)
+	for (T j = max_num; j >= min_num; --j)
 	{
 		iter = beg;
 		while (iter < end)
