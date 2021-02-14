@@ -11,8 +11,8 @@ using std::endl;
 using std::string;
 using std::vector;
 
-template <typename T>
-void print_mas(T max_num, T min_num, const T* beg, const T* end, size_t N, size_t speed, const string& str = "")
+template <typename T, typename T2>
+void print_mas(T max_num, T min_num, const T2* beg, const T2* end, size_t N, size_t speed, const string& str = "")
 {
 	//return;
 
@@ -36,7 +36,7 @@ void print_mas(T max_num, T min_num, const T* beg, const T* end, size_t N, size_
 		while (iter < end)
 		{
 			if (*iter == j)
-				*p_next_write = j;
+				*p_next_write = static_cast<char>(*iter);
 			else
 				*p_next_write = ' ';
 
@@ -48,7 +48,7 @@ void print_mas(T max_num, T min_num, const T* beg, const T* end, size_t N, size_
 	}
 
 	std::for_each(beg, end, [&p_next_write](auto& val)
-	{*p_next_write++ = val; });
+	{*p_next_write++ = static_cast<char>(val); });
 
 	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
 
@@ -62,8 +62,8 @@ void print_mas(T max_num, T min_num, const T* beg, const T* end, size_t N, size_
 	lastClock = clock();
 }
 
-template <typename T>
-void print_mas(T max_num, T min_num, const vector<T>& mas, size_t N, size_t speed, const string& str = "")
+template <typename T, typename T2>
+void print_mas(T max_num, T min_num, const vector<T2>& mas, size_t N, size_t speed, const string& str = "")
 {
 	print_mas(max_num, min_num, &mas.front(), &mas.back() + 1, N, speed, str);
 }

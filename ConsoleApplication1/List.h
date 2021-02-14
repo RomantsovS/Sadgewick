@@ -72,7 +72,6 @@ void deleteNode(link<T> x)
 	insert(freelist<T>, x);
 }
 
-
 template <typename T>
 link<T> newNodeN(T i)
 {
@@ -83,14 +82,12 @@ link<T> newNodeN(T i)
 	return t;
 }
 
-
 template <typename T>
 void deleteNodeN(link<T> x)
 {
 	//cout << "del " << x << endl;
 	delete x;
 }
-
 
 template <typename T>
 link<T> next(link<T> x)
@@ -103,7 +100,6 @@ int item(link<T> x)
 {
 	return x->item;
 }
-
 
 template <typename T>
 void printList(link<T> t)
@@ -118,12 +114,13 @@ void printList(link<T> t)
 
 	do
 	{
-		cout << x->item << endl;
+		cout << x->item << " ";
 
 		x = x->next;
 	} while (x != t && x);
-}
 
+	cout << endl;
+}
 
 template <typename T>
 link<T> generateList(size_t len, T start)
@@ -140,7 +137,6 @@ link<T> generateList(size_t len, T start)
 	return t;
 }
 
-
 template <typename T>
 link<T> generateRandList(size_t len, size_t max_val)
 {
@@ -155,7 +151,6 @@ link<T> generateRandList(size_t len, size_t max_val)
 
 	return t;
 }
-
 
 template <typename T>
 link<T> generateCircularList(size_t len, int start)
@@ -174,6 +169,17 @@ link<T> generateCircularList(size_t len, int start)
 	return t;
 }
 
+template<typename T>
+void delete_list(link<T>& a)
+{
+	if (a->next)
+	{
+		delete_list(a->next);
+		delete a;
+	}
+	else
+		delete a;
+}
 
 template <typename T>
 void inverse_list(link<T> &x)
@@ -197,13 +203,15 @@ void inverse_list(link<T> &x)
 template <typename T>
 void sort_list(link<T> &a)
 {
-	auto b = new node(0), x, u, t;
+	//link<T> b = new node<T>(), x, u, t;
+	auto b = std::make_shared<node<T>>();
+	link<T> x, u, t;
 
-	for (t = a->next; t != 0; t = u)
+	for (t = a; t != 0; t = u)
 	{
 		u = t->next;
 
-		for (x = b; x->next != 0; x = x->next)
+		for (x = b.get(); x->next != 0; x = x->next)
 		{
 			if (x->next->item > t->item)
 				break;
@@ -213,7 +221,7 @@ void sort_list(link<T> &a)
 		x->next = t;
 	}
 
-	a = b;
+	a = b->next;
 }
 
 template<typename T> class CList;

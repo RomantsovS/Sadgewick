@@ -48,9 +48,12 @@
     <ClInclude Include="Mas.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Sort.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="3_Sort.cpp">
+    <ClCompile Include="06-Elementary_sorting_methods\6.09-Linked_list_sorting.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

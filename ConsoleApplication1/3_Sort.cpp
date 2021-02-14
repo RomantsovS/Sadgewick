@@ -37,7 +37,7 @@ using std::forward_list;
 using std::map;
 using std::set;
 
-constexpr size_t N = 5000;
+constexpr size_t N = 500;
 constexpr char min_num = 'A', max_num = 'Z';
 
 template <typename T>
@@ -70,7 +70,7 @@ void bubble_sort(std::vector<T> &mas, size_t speed)
 				sorted = false;
 				++cnt_swap;
 
-				print_mas(mas, speed, "bubble_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
+				print_mas(max_num, min_num, mas, N, speed, "bubble_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 			}
 			++cnt_comparison;
 		}
@@ -78,7 +78,7 @@ void bubble_sort(std::vector<T> &mas, size_t speed)
 			break;
 	}
 
-	print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
+	print_mas(max_num, min_num, mas, N, speed, "bubble_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 }
 
 template <typename T>
@@ -103,7 +103,7 @@ void shaker_sort(vector<T> &mas, size_t speed)
 					sorted = false;
 					++cnt_swap;
 
-					print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
+					print_mas(max_num, min_num, mas, N, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 				}
 				++cnt_comparison;
 			}
@@ -119,7 +119,7 @@ void shaker_sort(vector<T> &mas, size_t speed)
 					sorted = false;
 					++cnt_swap;
 
-					print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
+					print_mas(max_num, min_num, mas, N, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 				}
 				++cnt_comparison;
 			}
@@ -130,7 +130,7 @@ void shaker_sort(vector<T> &mas, size_t speed)
 		forward = !forward;
 	}
 
-	print_mas(mas, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
+	print_mas(max_num, min_num, mas, N, speed, "shaker_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 }
 
 template <typename T>
@@ -154,7 +154,7 @@ void selection_sort(std::vector<T> &mas, size_t speed)
 		mas[i] = min;
 		mas[minIndex] = tmp;
 
-		print_mas(mas, speed, "selection_sort");
+		print_mas(max_num, min_num, mas, N, speed, "selection_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 	}
 }
 
@@ -175,10 +175,10 @@ void insertion_sort(std::vector<T> &mas, size_t speed)
 			mas[j] = tmp;
 			j--;
 
-			print_mas(mas, speed, "insertion_sort");
+			print_mas(max_num, min_num, mas, N, speed, "insertion_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 		}
 
-		print_mas(mas, speed, "insertion_sort");
+		print_mas(max_num, min_num, mas, N, speed, "insertion_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 	}
 }
 
@@ -202,13 +202,13 @@ void shall_sort(vector<T>& mas, size_t speed)
 
 				++cnt_swap;
 
-				print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
+				print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 			}
 			++cnt_comparison;
 
 			mas[j] = v;
 
-			print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(h) + " " + std::to_string(i) + " " + std::to_string(j));
+			print_mas(max_num, min_num, mas, N, speed, "shall_sort " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 		}
 }
 
@@ -242,7 +242,7 @@ void quick_sort_ranged(T *beg, T *end, size_t speed)
 		i++;
 		j--;
 
-		print_mas(beg, end, speed, "quick_sort_ranged");
+		print_mas(max_num, min_num, beg, end, N, speed, "quick_sort_ranged");
 	}
 
 	quick_sort_ranged(beg, beg + j, speed);
@@ -282,8 +282,8 @@ void run_sort(data_t<T> &data)
 
 	svec.push_back("Elasped time: " + std::to_string(endTime - startTime) + " " + data.name + " " + std::to_string(cnt_comparison) + " " + std::to_string(cnt_swap));
 
-	/*while (clock() - endTime < 1000)
-		;*/
+	while (clock() - endTime < 1000)
+		;
 }
 
 int main()
@@ -307,14 +307,10 @@ int main()
 	vec.push_back(data_t<char>{ mas, shaker_sort<char>, "shaker_sort", speed / 1 });
 	vec.push_back(data_t<char>{ mas, selection_sort<char>, "selection_sort", speed / 1});
 	vec.push_back(data_t<char>{ mas, insertion_sort<char>, "insertion_sort", speed / 1});
+	vec.push_back(data_t<char>{ mas, shall_sort<char>, "shall_sort", speed / 1 });
 	vec.push_back(data_t<char>{ mas, quick_sort<char>, "qsort", speed / 1});
 
 	std::for_each(vec.begin(), vec.end(), run_sort<char>);
-
-	/*for (auto data : vec)
-	{
-		run_sort(data);
-	}*/
 
 	system("cls");
 	for (const auto& str : svec)
