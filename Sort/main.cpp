@@ -14,7 +14,6 @@
 #include <tuple>
 #include <regex>
 #include <random>
-#include <conio.h>
 #include <valarray>
 #include <typeinfo>
 #include <cctype>
@@ -24,7 +23,7 @@
 #include <utility>
 #include <iomanip>
 
-#include "Mas.h"
+#include "../Mas.h"
 
 using std::cout;
 using std::cin;
@@ -37,8 +36,8 @@ using std::forward_list;
 using std::map;
 using std::set;
 
-constexpr size_t N = 500;
-constexpr char min_num = 'A', max_num = 'Z';
+constexpr size_t N = 20;
+constexpr char min_num = 'A', max_num = 'P';
 
 template <typename T>
 struct data_t
@@ -301,7 +300,7 @@ int main()
 		//mas[i] = 'A'/* + i % (max_num - min_num + 1)*/;
 	}
 
-	size_t speed = 1;
+	size_t speed = 100;
 
 	vec.push_back(data_t<char>{ mas, bubble_sort<char>, "bubble_sort", speed / 1});
 	vec.push_back(data_t<char>{ mas, shaker_sort<char>, "shaker_sort", speed / 1 });
@@ -312,14 +311,17 @@ int main()
 
 	std::for_each(vec.begin(), vec.end(), run_sort<char>);
 
-	system("cls");
+	std::system("clear");
+
 	for (const auto& str : svec)
 	{
 		cout << str << endl;
 	}
 
-	cout << "press any key to exit\n";
-	_getch();
+	/*cout << "press any key to exit\n";
+	
+	char ch;
+	cin >> ch;*/
 
 	return 0;
 }

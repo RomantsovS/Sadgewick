@@ -24,7 +24,7 @@ void print_mas(T max_num, T min_num, const T2* beg, const T2* end, size_t N, siz
 
 	static clock_t lastClock = clock();
 
-	system("cls");
+	std::system("clear");
 
 	char* p_next_write = &buffer[0];
 
