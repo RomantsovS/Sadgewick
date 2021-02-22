@@ -16,7 +16,7 @@ all: 	$(TARGETS)
 
 # A rule to build .exe file out of a .o file
 main.exe: $(MYLIBS)
-	$(CXX) -o $@ $(MYLIBS) $(LIBS)
+	$(CXX) -o $@ $(MYLIBS)
 	@echo ================================================================================
 	@echo Done building $@
 	@echo ================================================================================

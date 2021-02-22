@@ -37,23 +37,21 @@ void insitu(Item data[], intWrapper a[], size_t N)
 
 int main()
 {
-	size_t N = 10;
+	std::string str{"a s o r t i n g e x a m p l e"};
+	std::istringstream is{str};
 
-	std::default_random_engine rand_eng;
-	std::uniform_int_distribution<int> u_ch(0, 9);
+	vector<char> mas;
 
-	vector<int> mas;
-
-	for (size_t i = 0; i != N; ++i)
-	{
-		mas.push_back(u_ch(rand_eng));
+	char ch;
+	while(is >> ch) {
+		mas.push_back(ch);
 	}
 
 	print_mas(mas);
 
-	vector<intWrapper> a({2, 4, 6, 8, 0, 1, 3, 5, 7, 9});
+	vector<intWrapper> a({0, 10, 8, 14, 7, 5, 13, 11, 6, 2, 12, 3, 1, 4, 9});
 
-	insitu(&mas.front(), &a.front(), N);
+	insitu(&mas.front(), &a.front(), mas.size());
 
 	print_mas(mas);
 
