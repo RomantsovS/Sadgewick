@@ -33,25 +33,7 @@ bool scan(Item& x)
 	cnt += strlen(x.str) + 1;
 	return flag;
 }
-/*
-struct intWrapper {
-	int item;
-	intWrapper(int i = 0)
-	{
-		item = i;
-	}
-	operator int() const
-	{
-		return item;
-	}
-};
 
-using Index = intWrapper;
-
-bool operator< (const Index &i, const Index& j) {
-	return data[i] < data[j];
-}
-*/
 int main()
 {
 	vector<Item> ivec;
