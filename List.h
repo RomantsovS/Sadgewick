@@ -9,13 +9,12 @@ using std::cin;
 using std::endl;
 
 template<typename T>
-struct node
-{
+struct node {
 	node() : next(nullptr) {}
-	node(T x, node *t = nullptr) : item(x), next(t) {}
+	node(T x, node<T> *t = nullptr) : item(x), next(t) {}
 
 	T item;
-	node *next;
+	node<T> *next;
 };
 
 template <typename T>
@@ -27,18 +26,18 @@ link<T> freelist = nullptr;
 template <typename T>
 void construct(int N)
 {
-	freelist = new node<T>[N + 1];
+	freelist<T> = new node<T>[N + 1];
 
 	for (size_t i = 0; i != N; ++i)
 	{
-		freelist[i].next = &freelist<T>[i + 1];
+		freelist<T>[i].next = &freelist<T>[i + 1];
 	}
 }
 
 template <typename T>
 void destruct()
 {
-	delete[] freelist;
+	delete[] freelist<T>;
 }
 
 template <typename T>
@@ -51,7 +50,7 @@ void insert(link<T> x, link<T> t)
 template <typename T>
 link<T> remove(link<T> x)
 {
-	link t = x->next;
+	link<T> t = x->next;
 	x->next = t->next;
 	return t;
 }
@@ -138,14 +137,12 @@ link<T> generateList(size_t len, T start)
 }
 
 template <typename T>
-link<T> generateRandList(size_t len, size_t max_val)
-{
+link<T> generateRandList(size_t len, size_t max_val) {
 	auto t = new node<T>(rand() % max_val, 0);
 
 	auto x = t;
 
-	for (size_t i = 1; i < len; ++i)
-	{
+	for (size_t i = 1; i < len; ++i) {
 		x = (x->next = new node<T>(rand() % max_val, 0));
 	}
 
@@ -170,10 +167,8 @@ link<T> generateCircularList(size_t len, int start)
 }
 
 template<typename T>
-void delete_list(link<T>& a)
-{
-	if (a->next)
-	{
+void delete_list(link<T>& a) {
+	if (a->next) {
 		delete_list(a->next);
 		delete a;
 	}
@@ -184,7 +179,7 @@ void delete_list(link<T>& a)
 template <typename T>
 void inverse_list(link<T> &x)
 {
-	link r = 0, y = x, t;
+	link<T> r = 0, y = x, t;
 
 	while (y)
 	{
@@ -201,18 +196,15 @@ void inverse_list(link<T> &x)
 }
 
 template <typename T>
-void sort_list(link<T> &a)
-{
+void sort_list(link<T> &a) {
 	//link<T> b = new node<T>(), x, u, t;
 	auto b = std::make_shared<node<T>>();
 	link<T> x, u, t;
 
-	for (t = a; t != 0; t = u)
-	{
+	for (t = a; t != 0; t = u) {
 		u = t->next;
 
-		for (x = b.get(); x->next != 0; x = x->next)
-		{
+		for (x = b.get(); x->next != 0; x = x->next) {
 			if (x->next->item > t->item)
 				break;
 		}
@@ -227,23 +219,20 @@ void sort_list(link<T> &a)
 template<typename T> class CList;
 
 template<typename T>
-class CList
-{
+class CList {
 public:
-	template<typename T>
-	struct node
-	{
+	template<typename U>
+	struct node {
 		node() : next(nullptr) {}
-		node(T x, std::shared_ptr<node> t = nullptr) : item(x), next(t) {}
+		node(U x, std::shared_ptr<node> t = nullptr) : item(x), next(t) {}
 
-		T item;
+		U item;
 		std::shared_ptr<node> next;
 	};
 
 	CList() : head(nullptr), curr(head) {}
 
-	std::shared_ptr<node<T>> &get_head()
-	{
+	std::shared_ptr<node<T>> &get_head() {
 		return head;
 	}
 
