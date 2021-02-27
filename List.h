@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <stack>
 
 using std::cout;
 using std::cin;
@@ -168,12 +169,22 @@ link<T> generateCircularList(size_t len, int start)
 
 template<typename T>
 void delete_list(link<T>& a) {
-	if (a->next) {
-		delete_list(a->next);
-		delete a;
+	if(!a)
+		return;
+
+	std::stack<link<T>> st;
+
+	while(a) {
+		st.push(a);
+		a = a->next;
 	}
-	else
-		delete a;
+
+	while(!st.empty()) {
+		auto t = st.top();
+		delete t;
+		st.pop();
+	}
+
 }
 
 template <typename T>

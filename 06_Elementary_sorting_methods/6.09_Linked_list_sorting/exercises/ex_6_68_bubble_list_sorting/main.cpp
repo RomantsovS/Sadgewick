@@ -2,51 +2,46 @@
 #include <vector>
 #include <random>
 #include <iomanip>
-#include <stack>
 
 #include "../../../../List.h"
 
 template <typename T>
-void bubble_list_sort(link<T>& h) {
+void bubble_list_sort(link<T> &h)
+{
 	link<T> out = h;
+	link<T> last = nullptr;
 
 	for (auto t = out; t != nullptr; t = t->next)
 	{
-		std::stack<link<T>> st;
-		for (auto u = out; u != nullptr; u = u->next) {
-			st.push(u);
-		}
+		link<T> prev = nullptr;
+		auto u = out;
 
-		while (!st.empty()) {
-			auto last = st.top();
-			st.pop();
+		while (u->next && u->next != last)
+		{
+			if (u->item > u->next->item)
+			{
+				auto next_next = u->next->next;
+				u->next->next = u;
 
-			if (st.empty()) {
-				break;
-			}
-
-			auto pre_last = st.top();
-			st.pop();
-
-			if(last->item < pre_last->item) {
-				auto last_next = last->next;
-				last->next = pre_last;
-				pre_last->next = last_next;
-
-				if(st.empty()) {
-					out = last;
-					break;
+				if (!prev)
+				{
+					out = u->next;
 				}
-				else {
-					auto pre_pre = st.top();
-					pre_pre->next = last;
+				else
+				{
+					prev->next = u->next;
 				}
-				st.push(last);
+
+				prev = u->next;
+				u->next = next_next;
 			}
-			else {
-				st.push(pre_last);
+			else
+			{
+				prev = u;
+				u = u->next;
 			}
 		}
+		last = u;
 	}
 
 	h = out;
@@ -54,16 +49,22 @@ void bubble_list_sort(link<T>& h) {
 
 int main()
 {
-	link<int> lst;
-	lst = generateRandList<int>(20, 0, 10);
+	for (size_t i = 1; i <= 100000; i *= 10)
+	{
+		cout << "cnt = " << i << endl;
+		link<int> lst;
+		srand(clock());
+		lst = generateRandList<int>(i, 0, 10);
 
-	printList(lst);
+		//printList(lst);
 
-	bubble_list_sort(lst);
+		auto t = clock();
+		bubble_list_sort(lst);
+		std::cout << (clock() - t) << endl;
+		//printList(lst);
 
-	printList(lst);
-
-	delete_list(lst);
+		delete_list(lst);
+	}
 
 	return 0;
 }
