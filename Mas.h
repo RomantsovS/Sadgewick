@@ -73,12 +73,12 @@ void print_mas(T max_num, T min_num, const vector<T2>& mas, size_t N, size_t spe
 }
 
 template <typename T>
-void print_mas(const vector<T>& mas)
+void print_mas(const vector<T>& mas, size_t width = 2)
 {
 
 	for (auto& el : mas)
 	{
-		cout << std::setw(2) << el;
+		cout << std::setw(width) << el;
 	}
 	cout << endl;
 }
