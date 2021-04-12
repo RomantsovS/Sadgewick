@@ -6,6 +6,12 @@
 extern const size_t N;
 extern const char min_num, max_num;
 
+template<typename T>
+void compexch(T &A, T &B) {
+	if(B < A)
+		std::swap(A, B);
+}
+
 template <typename T>
 void bubble_sort(std::vector<T> &mas, size_t speed)
 {
