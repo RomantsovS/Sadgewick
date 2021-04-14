@@ -1,6 +1,6 @@
 LIBS     = -lstdc++
 MYLIBS = main.o
-CXXFLAGS = -Wall -time -O3 -g
+CXXFLAGS = -Wall -time -O0 -g
 
 .SUFFIXES: .cpp .o
 

@@ -39,8 +39,8 @@ using std::forward_list;
 using std::map;
 using std::set;
 
-const size_t N = 20;
-const char min_num = 'A', max_num = 'P';
+const size_t N = 40;
+const char min_num = 'A', max_num = 'Z';
 
 template <typename T>
 struct data_t
@@ -98,14 +98,14 @@ int main()
 		//mas[i] = 'A'/* + i % (max_num - min_num + 1)*/;
 	}
 
-	size_t speed = 100;
+	size_t speed = 10;
 
 	vec.push_back(data_t<char>{ mas, bubble_sort<char>, "bubble_sort", speed / 1});
 	vec.push_back(data_t<char>{ mas, shaker_sort<char>, "shaker_sort", speed / 1 });
-	vec.push_back(data_t<char>{ mas, selection_sort<char>, "selection_sort", speed / 1});
-	vec.push_back(data_t<char>{ mas, insertion_sort<char>, "insertion_sort", speed / 1});
-	vec.push_back(data_t<char>{ mas, shall_sort<char>, "shall_sort", speed / 1 });
-	vec.push_back(data_t<char>{ mas, quick_sort<char>, "qsort", speed / 1});
+	vec.push_back(data_t<char>{ mas, selection_sort<char>, "selection_sort", speed * 10});
+	vec.push_back(data_t<char>{ mas, insertion_sort<char>, "insertion_sort", speed * 10});
+	vec.push_back(data_t<char>{ mas, shall_sort<char>, "shall_sort", speed * 1 });
+	vec.push_back(data_t<char>{ mas, quick_sort<char>, "qsort", speed * 10});
 
 	std::for_each(vec.begin(), vec.end(), run_sort<char>);
 

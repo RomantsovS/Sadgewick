@@ -156,6 +156,11 @@ void insertion_sort(std::vector<T> &mas, size_t speed, int l = -1, int r = -1)
 }
 
 template <typename T>
+void insertion_sort(std::vector<T> &mas, size_t speed) {
+	insertion_sort(mas, speed, 0, mas.size() - 1);
+}
+
+template <typename T>
 void shall_sort(vector<T>& mas, size_t speed)
 {
 	size_t h;
