@@ -191,49 +191,49 @@ void shall_sort(vector<T>& mas, size_t speed)
 		}
 }
 
-template <typename T>
-void quick_sort_ranged(T *beg, T *end, size_t speed)
+template <typename Item>
+int partition(std::vector<Item> &a, int l, int r)
 {
-	if (end - beg < 2)
-		return;
+	int i = l - 1, j = r, v = a[r];
 
-	auto p = *(beg + (end - beg) / 2);
-
-	int i = 0, temp;
-	auto j = end - beg;
-
-	while (i < j)
+	for (;;)
 	{
-		while (*(beg + i) < p)
-		{
-			++i;
-		}
+		while (a[++i] < v)
+			;
+		while (v < a[--j])
+			if (j == l)
+				break;
+		if (i >= j)
+			break;
 
-		while (*(beg + j) > p)
-		{
-			--j;
-		}
-
-		temp = *(beg + i);
-		*(beg + i) = *(beg + j);
-		*(beg + j) = temp;
-
-		i++;
-		j--;
-
-		#if defined PRINT_SORT
-		print_mas(max_num, min_num, beg, end, N, speed, "quick_sort_ranged");
-		#endif
+		std::swap(a[i], a[j]);
 	}
 
-	quick_sort_ranged(beg, beg + j, speed);
-	quick_sort_ranged(beg + j + 1, end, speed);
+	std::swap(a[i], a[r]);
+	
+	return i;
 }
 
-template <typename T>
-void quick_sort(std::vector<T> &mas, size_t speed)
+template <typename Item>
+void quicksort(std::vector<Item> &a, int l, int r, size_t speed = 0)
 {
-	quick_sort_ranged(&mas.front(), &mas.back(), speed);
+	if (r <= l)
+		return;
+
+	int i = partition(a, l, r);
+
+	#if defined PRINT_SORT
+	print_mas(max_num, min_num, a, N, speed, "quick_sort");
+	#endif
+
+	quicksort(a, l, i - 1);
+	quicksort(a, i + 1, r);
+}
+
+template <typename Item>
+void quick_sort(std::vector<Item> &a, size_t speed)
+{
+	quicksort(a, 0, a.size() -1);
 }
 
 #endif
