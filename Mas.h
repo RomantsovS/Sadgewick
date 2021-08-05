@@ -83,5 +83,16 @@ void print_mas(const vector<T>& mas, size_t width = 2)
 	cout << endl;
 }
 
+template <typename T>
+void print_mas(const T* beg, const T* end, size_t width = 2)
+{
+
+	while(beg < end)
+	{
+		cout << std::setw(width) << *beg++;
+	}
+	cout << endl;
+}
+
 #endif // !MAS_H
 
