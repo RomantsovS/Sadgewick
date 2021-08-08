@@ -27,7 +27,7 @@ main.exe: $(MYLIBS)
 	@echo
 	@echo
 
-main.o: main.cpp sort.h ../Mas.h
+main.o: main.cpp ../../../../Sort/sort.h
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 	@echo ================================================================================
 	@echo Done compiling $@

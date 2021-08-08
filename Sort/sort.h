@@ -124,13 +124,10 @@ void selection_sort(std::vector<T> &mas, size_t speed)
 }
 
 template <typename T>
-void insertion_sort(std::vector<T> &mas, size_t speed, int l = -1, int r = -1)
+void insertion_sort(T mas[], int l, int r, size_t speed = 0)
 {
 	int j;
 	T tmp;
-
-    if(l == -1) l = 0;
-    if(r == -1) r = mas.size() - 1;
 
 	for (int i = l + 1; i != r + 1; ++i)
 	{
@@ -145,19 +142,19 @@ void insertion_sort(std::vector<T> &mas, size_t speed, int l = -1, int r = -1)
 			j--;
 
 			#if defined PRINT_SORT
-			print_mas(max_num, min_num, mas, N, speed, "insertion_sort");
+			print_mas(max_num, min_num, &mas[l], &mas[r], N, speed, "insertion_sort");
 			#endif
 		}
 
 		#if defined PRINT_SORT
-		print_mas(max_num, min_num, mas, N, speed, "insertion_sort");
+		print_mas(max_num, min_num, &mas[l], &mas[r], N, speed, "insertion_sort");
 		#endif
 	}
 }
 
 template <typename T>
 void insertion_sort(std::vector<T> &mas, size_t speed) {
-	insertion_sort(mas, speed, 0, mas.size() - 1);
+	insertion_sort(&mas[0], 0, mas.size() - 1, speed);
 }
 
 template <typename T>
@@ -192,7 +189,7 @@ void shall_sort(vector<T>& mas, size_t speed)
 }
 
 template <typename Item>
-int partition(std::vector<Item> &a, int l, int r)
+int partition(std::vector<Item> &a, int l, int r, size_t speed = 0)
 {
 	int i = l - 1, j = r;
 	Item v = a[r];
@@ -208,10 +205,18 @@ int partition(std::vector<Item> &a, int l, int r)
 			break;
 
 		std::swap(a[i], a[j]);
+
+		#if defined PRINT_SORT
+		print_mas(max_num, min_num, a, N, speed, "quick_sort");
+		#endif
 	}
 
 	std::swap(a[i], a[r]);
 	
+	#if defined PRINT_SORT
+	print_mas(max_num, min_num, &a[l], &a[r], N, speed, "quick_sort");
+	#endif
+
 	return i;
 }
 
@@ -221,20 +226,58 @@ void quicksort(std::vector<Item> &a, int l, int r, size_t speed = 0)
 	if (r <= l)
 		return;
 
-	int i = partition(a, l, r);
+	int i = partition(a, l, r, speed);
 
 	#if defined PRINT_SORT
-	print_mas(max_num, min_num, a, N, speed, "quick_sort");
+	print_mas(max_num, min_num, &a[l], &a[r], N, speed, "quick_sort");
 	#endif
 
-	quicksort(a, l, i - 1);
-	quicksort(a, i + 1, r);
+	quicksort(a, l, i - 1, speed);
+	quicksort(a, i + 1, r, speed);
 }
 
 template <typename Item>
 void quick_sort(std::vector<Item> &a, size_t speed)
 {
-	quicksort(a, 0, a.size() -1);
+	quicksort(a, 0, a.size() -1, speed);
+}
+
+template <class Item>
+void merge(Item a[], int l, int m, int r)
+{
+	int i, j;
+	static Item aux[N];
+	for (i = m + 1; i > l; i--)
+		aux[i - 1] = a[i - 1];
+	for (j = m; j < r; j++)
+		aux[r + m - j] = a[j + 1];
+	for (int k = l; k <= r; k++)
+		if (aux[j] < aux[i])
+			a[k] = aux[j--];
+		else
+			a[k] = aux[i++];
+}
+
+template <class Item>
+void mergesort(Item a[], int l, int r, size_t speed = 0)
+{
+	if (r <= l)
+		return;
+
+	#if defined PRINT_SORT
+	print_mas(max_num, min_num, &a[l], &a[r], N, speed, "merge_sort");
+	#endif
+
+	int m = (r + l) / 2;
+	mergesort(a, l, m, speed);
+	mergesort(a, m + 1, r, speed);
+	merge(a, l, m, r);
+}
+
+template <typename Item>
+void merge_sort(std::vector<Item> &a, size_t speed)
+{
+	mergesort(&a[0], 0, a.size() -1, speed);
 }
 
 #endif

@@ -50,9 +50,8 @@ struct data_t
 	void (*func)(std::vector<T>&, size_t);
 	string name;
 	size_t speed;
+	size_t time;
 };
-
-vector<string> svec;
 
 template <typename T>
 void run_sort(data_t<T> &data)
@@ -77,7 +76,7 @@ void run_sort(data_t<T> &data)
 		cout << endl;
 	}
 
-	svec.push_back("Elasped time: " + std::to_string(endTime - startTime) + " " + data.name);
+	data.time = endTime - startTime;
 
 	while (clock() - endTime < 1000)
 		;
@@ -98,14 +97,15 @@ int main()
 		//mas[i] = 'A'/* + i % (max_num - min_num + 1)*/;
 	}
 
-	size_t speed = 10;
+	size_t speed = 5;
 
-	vec.push_back(data_t<char>{ mas, bubble_sort<char>, "bubble_sort", speed / 1});
-	vec.push_back(data_t<char>{ mas, shaker_sort<char>, "shaker_sort", speed / 1 });
-	vec.push_back(data_t<char>{ mas, selection_sort<char>, "selection_sort", speed * 10});
+	vec.push_back(data_t<char>{ mas, bubble_sort<char>, "bubble_sort", speed * 40});
+	vec.push_back(data_t<char>{ mas, shaker_sort<char>, "shaker_sort", speed * 40 });
+	vec.push_back(data_t<char>{ mas, selection_sort<char>, "selection_sort", speed * 2});
 	vec.push_back(data_t<char>{ mas, insertion_sort<char>, "insertion_sort", speed * 10});
-	vec.push_back(data_t<char>{ mas, shall_sort<char>, "shall_sort", speed * 1 });
-	vec.push_back(data_t<char>{ mas, quick_sort<char>, "qsort", speed * 10});
+	vec.push_back(data_t<char>{ mas, shall_sort<char>, "shall_sort", speed * 10 });
+	vec.push_back(data_t<char>{ mas, quick_sort<char>, "qsort", speed * 1});
+	vec.push_back(data_t<char>{ mas, merge_sort<char>, "merge_sort", speed * 1});
 
 	std::for_each(vec.begin(), vec.end(), run_sort<char>);
 
@@ -113,9 +113,9 @@ int main()
 
 	}
 
-	for (const auto& str : svec)
+	for (const auto& str : vec)
 	{
-		cout << str << endl;
+		cout << "Elasped time: " << std::setw(10) << str.time << " " << str.name << endl;
 	}
 
 	return 0;

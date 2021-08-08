@@ -16,19 +16,14 @@ using std::vector;
 template <typename T, typename T2>
 void print_mas(T max_num, T min_num, const T2* beg, const T2* end, size_t N, size_t speed, const string& str = "")
 {
-	//return;
+	if(speed <= 0)
+		return;
 
 	//char buffer[(N + 1) * (max_num + 1 + 1)];
 	vector<char> buffer;
 	buffer.resize((N + 1) * (max_num + 1 + 1));
 
 	memset(&buffer[0], ' ', (N + 1) * (max_num + 1 + 1));
-
-	static clock_t lastClock = clock();
-
-	if(std::system("clear")) {
-		
-	}
 
 	char* p_next_write = &buffer[0];
 
@@ -54,6 +49,10 @@ void print_mas(T max_num, T min_num, const T2* beg, const T2* end, size_t N, siz
 	std::for_each(beg, end, [&p_next_write](auto& val)
 	{*p_next_write++ = static_cast<char>(val); });
 
+	if(std::system("clear")) {
+		
+	}
+
 	std::cout.write(&buffer[0], p_next_write - &buffer[0]);
 
 	cout << endl;
@@ -61,7 +60,9 @@ void print_mas(T max_num, T min_num, const T2* beg, const T2* end, size_t N, siz
 	if (!str.empty())
 		cout << str + " " << speed << endl;
 
-	while (clock() - lastClock < CLOCKS_PER_SEC / 1000 * static_cast<int>(speed))
+	static clock_t lastClock = clock();
+
+	while (clock() - lastClock < CLOCKS_PER_SEC / (1 * static_cast<int>(speed)))
 		;
 	lastClock = clock();
 }
