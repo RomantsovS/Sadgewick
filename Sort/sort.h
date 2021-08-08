@@ -194,7 +194,8 @@ void shall_sort(vector<T>& mas, size_t speed)
 template <typename Item>
 int partition(std::vector<Item> &a, int l, int r)
 {
-	int i = l - 1, j = r, v = a[r];
+	int i = l - 1, j = r;
+	Item v = a[r];
 
 	for (;;)
 	{
