@@ -139,12 +139,12 @@ link<T> generateList(size_t len, T start)
 
 template <typename T>
 link<T> generateRandList(size_t len, T min_val, T max_val) {
-	auto t = new node<T>(min_val + rand() % max_val, 0);
+	auto t = new node<T>(min_val + rand() % (max_val - min_val), 0);
 
 	auto x = t;
 
 	for (size_t i = 1; i < len; ++i) {
-		x = (x->next = new node<T>(min_val + rand() % max_val, 0));
+		x = (x->next = new node<T>(min_val + rand() % (max_val - min_val), 0));
 	}
 
 	return t;
