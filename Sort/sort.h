@@ -103,11 +103,11 @@ void selection_sort(std::vector<T> &mas, size_t speed) {
 }
 
 template <typename T>
-void insertion_sort(T mas[], int l, int r, size_t speed = 0) {
+void insertion_sort(T mas[], int l, int r, [[maybe_unused]] size_t speed = 0) {
     int j;
     T tmp;
 
-    for (int i = l + 1; i != r + 1; ++i) {
+    for (int i = l + 1; i < r + 1; ++i) {
         tmp = mas[i];
         j = i - 1;
 
