@@ -8,6 +8,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <iostream>
 
 using std::cerr;
 using std::cin;
