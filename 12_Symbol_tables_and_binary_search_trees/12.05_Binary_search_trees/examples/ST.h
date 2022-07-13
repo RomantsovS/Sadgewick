@@ -13,6 +13,7 @@ class ST {
             l = 0;
             r = 0;
         }
+        size_t N = 1;
     };
 
     typedef node* link;
@@ -35,10 +36,18 @@ class ST {
             h = new node(x);
             return;
         }
-        if (x.key() < h->item.key())
+        if (x.key() < h->item.key()) {
             insertR(h->l, x);
-        else
+        } else {
             insertR(h->r, x);
+        }
+        CalcCount(h);
+    }
+
+    void CalcCount(link h) {
+        h->N = 1;
+        if (h->l) h->N += h->l->N;
+        if (h->r) h->N += h->r->N;
     }
 
     void showR(link h, std::ostream& os) {
@@ -52,14 +61,18 @@ class ST {
         link x = h->l;
         h->l = x->r;
         x->r = h;
+        CalcCount(h);
         h = x;
+        CalcCount(h);
     }
 
     void rotL(link& h) {
         link x = h->r;
         h->r = x->l;
         x->l = h;
+        CalcCount(h);
         h = x;
+        CalcCount(h);
     }
 
     void insertT(link& h, Item x) {
@@ -74,6 +87,60 @@ class ST {
             insertT(h->r, x);
             rotL(h);
         }
+    }
+
+    Item selectR(link h, int k) {
+        if (h == 0) return nullItem;
+        int t = (h->l == 0) ? 0 : h->l->N;
+        if (t > k) return selectR(h->l, k);
+        if (t < k) return selectR(h->r, k - t - 1);
+        return h->item;
+    }
+
+    link partR(link h, int k) {
+        int t = (h->l == 0) ? 0 : h->l->N;
+
+        if (t > k) {
+            h->l = partR(h->l, k);
+            rotR(h);
+        }
+        if (t < k) {
+            h->r = partR(h->r, k - t - 1);
+            rotL(h);
+        }
+        return h;
+    }
+
+    link joinLR(link a, link b) {
+        if (b == 0) return a;
+        partR(b, 0);
+        b->l = a;
+        CalcCount(b);
+        return b;
+    }
+
+    void removeR(link& h, Key v) {
+        if (h == 0) return;
+        Key w = h->item.key();
+        if (v < w) removeR(h->l, v);
+        if (w < v) removeR(h->r, v);
+        if (v == w) {
+            link t = h;
+            h = joinLR(h->l, h->r);
+            delete t;
+        }
+        CalcCount(h);
+    }
+
+    link joinR(link a, link b) {
+        if (b == 0) return a;
+        if (a == 0) return b;
+        insertT(b, a->item);
+        b->l = joinR(a->l, b->l);
+        b->r = joinR(a->r, b->r);
+        delete a;
+        CalcCount(b);
+        return b;
     }
 
    public:
@@ -117,10 +184,10 @@ class ST {
             cur = p->r;
         }
 
-        while(!st.empty()) {
+        while (!st.empty()) {
             link pp = st.top();
             st.pop();
-            if(cur->item.key() < pp->item.key()) {
+            if (cur->item.key() < pp->item.key()) {
                 pp->l = cur;
                 rotR(pp);
             } else {
@@ -129,6 +196,27 @@ class ST {
             }
         }
         head = cur;
+    }
+
+    Item select(int k) { return selectR(head, k); }
+
+    void remove(Item x) { removeR(head, x.key()); }
+
+    void join(ST<Item, Key>& b) { head = joinR(head, b.head); }
+
+    Item selectUnrecursive(int k) {
+        if (head == 0) return nullItem;
+        link h = head;
+
+        while (true) {
+            int t = (h->l == 0) ? 0 : h->l->N;
+            if (t > k) h = h->l;
+            else if (t < k) {
+                h = h->r;
+                k = k - t - 1;
+            } else
+                return h->item;
+        }
     }
 
     void print(size_t offset = 2, size_t start_offset = 0) { print(head, offset, start_offset); }
@@ -142,12 +230,14 @@ class ST {
 
         if (!curr_node->l && !curr_node->r) {
             print_node(curr_node->item.key(), start_offset);
+            std::cout << '(' << curr_node->N << ')';
             print_node('-', 0);
             std::cout << std::endl;
         } else {
             print(curr_node->r, offset, start_offset + offset);
 
             print_node(curr_node->item.key(), start_offset);
+            std::cout << '(' << curr_node->N << ')';
             std::cout << std::endl;
 
             print(curr_node->l, offset, start_offset + offset);
