@@ -6,6 +6,8 @@ template <class Item, class Key>
 class ST {
    private:
     struct node {
+        node(Item new_item, node* left, node* right, size_t num)
+            : item(new_item), l(left), r(right), N(num) {}
         Item item;
         node *l, *r;
         node(Item x) {
@@ -48,8 +50,7 @@ class ST {
     }
 
     void fixN(link h) {
-        if(!h)
-            return;
+        if (!h) return;
         h->N = 1;
         if (h->l) h->N += h->l->N;
         if (h->r) h->N += h->r->N;
@@ -158,10 +159,49 @@ class ST {
         balanceR(h->r);
     }
 
+    void splay(link& h, Item x) {
+        if (h == 0) {
+            h = new node(x, 0, 0, 1);
+            return;
+        }
+        if (x.key() < h->item.key()) {
+            link& hl = h->l;
+            int N = h->N;
+            if (hl == 0) {
+                h = new node(x, 0, h, N + 1);
+                return;
+            }
+            if (x.key() < hl->item.key()) {
+                splay(hl->l, x);
+                rotR(h);
+            } else {
+                splay(hl->r, x);
+                rotL(hl);
+            }
+            rotR(h);
+        } else {
+            link& hr = h->r;
+            int N = h->N;
+            if (hr == 0) {
+                h = new node(x, h, 0, N + 1);
+                return;
+            }
+            if (hr->item.key() < x.key()) {
+                splay(hr->r, x);
+                rotL(h);
+            } else {
+                splay(hr->l, x);
+                rotR(hr);
+            }
+            rotL(h);
+        }
+    }
+
    public:
     ST() { head = 0; }
     Item search(Key v) { return searchR(head, v); }
     void insert(Item x) { insertR(head, x); }
+    void insertSplay(Item x) { splay(head, x); }
 
     void show(std::ostream& os) { showR(head, os); }
 
