@@ -8,7 +8,10 @@ project(${THIS_PROJECT} VERSION ${PROJECT_VESRION})
 
 find_path(ITEM_HEADER NAMES Item.h PATHS
 "${CMAKE_FRAMEWORK_PATH}../../../13_Balanced_trees/13.00_Balanced_trees/examples")
-include_directories(${ITEM_HEADER})
+
+find_path(HASH_HEADER NAMES Hash.h PATHS
+"${CMAKE_FRAMEWORK_PATH}../../../14_Hashing/14.01_Hash_functions/examples")
+include_directories(${HASH_HEADER} ${ITEM_HEADER})
 
 add_executable(${THIS_PROJECT} ex_14_3.cpp)
 

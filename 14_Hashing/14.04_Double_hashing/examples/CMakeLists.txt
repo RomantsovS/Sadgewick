@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.2)
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
 set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-set(THIS_PROJECT 14.03_Linear_probing)
+set(THIS_PROJECT 14.04_Double_hashing)
 project(${THIS_PROJECT} VERSION ${PROJECT_VESRION})
 
 find_path(ITEM_HEADER NAMES Item.h PATHS
@@ -13,7 +13,7 @@ find_path(HASH_HEADER NAMES Hash.h PATHS
 "${CMAKE_FRAMEWORK_PATH}../../../14_Hashing/14.01_Hash_functions/examples")
 include_directories(${HASH_HEADER} ${ITEM_HEADER})
 
-add_executable(${THIS_PROJECT} ex_14_4.cpp)
+add_executable(${THIS_PROJECT} ex_14_6.cpp)
 
 set_target_properties(${THIS_PROJECT} PROPERTIES
     CXX_STANDARD 17

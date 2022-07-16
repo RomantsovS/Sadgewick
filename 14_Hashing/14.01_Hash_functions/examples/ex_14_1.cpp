@@ -2,13 +2,7 @@
 #include <cmath>
 #include <iostream>
 
-int hash(char* v, int M) {
-    int h = 0, a = 127;
-    for (; *v != 0; v++) {
-        h = (a * h + *v) % M;
-    }
-    return h;
-}
+#include "Hash.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
     char ch[] = "test";

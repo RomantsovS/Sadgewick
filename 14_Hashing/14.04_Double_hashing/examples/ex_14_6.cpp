@@ -10,8 +10,6 @@ using Key = int;
 template <typename Item, typename Key>
 class HashTable {
    private:
-    Item nullItem;
-
     struct node {
         Item item;
         node* next;
@@ -23,39 +21,45 @@ class HashTable {
 
     using link = node*;
 
-    link* heads;
+    Item* st;
     int N, M;
-
-    Item searchR(link t, Key v) {
-        if (t == 0) return nullItem;
-        if (t->item.key() == v) return t->item;
-        return searchR(t->next, v);
-    }
+    Item nullItem;
 
    public:
     HashTable(int maxN) {
         N = 0;
-        M = maxN / 5;
-        heads = new link[M];
-        for (int i = 0; i < M; i++) heads[i] = 0;
+        M = 2 * maxN;
+        st = new Item[M];
+        for (int i = 0; i < M; ++i) st[i] = nullItem;
     }
-    Item search(Key v) { return searchR(heads[hash(v, M)], v); }
+    int count() const { return N; }
     void insert(Item item) {
-        int i = hash(item.key(), M);
-        heads[i] = new node(item, heads[i]);
+        Key v = item.key();
+        int i = hash(v, M), k = hashtwo(v);
+        while (!st[i].null()) i = (i + k) % M;
+        st[i] = item;
         N++;
-    };
+    }
+    Item search(Key v) {
+        int i = hash(v, M), k = hashtwo(v);
+        while (!st[i].null())
+            if (v == st[i].key())
+                return st[i];
+            else
+                i = (i + k) % M;
+        return nullItem;
+    }
 };
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[]) {
     HashTable<Item, Key> ht(10);
     ht.insert(1);
     ht.insert(2);
-    ht.insert(3);
+    ht.insert(11);
 
     std::cout << ht.search(1).key() << std::endl;
     std::cout << ht.search(2).key() << std::endl;
-    std::cout << ht.search(3).key() << std::endl;
+    std::cout << ht.search(11).key() << std::endl;
     std::cout << ht.search(4).key() << std::endl;
 
     std::cout << "ok\n";
