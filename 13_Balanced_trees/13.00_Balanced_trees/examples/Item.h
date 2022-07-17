@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-static int maxKey = 1000;
-
 class Item {
    private:
     Key keyval;
