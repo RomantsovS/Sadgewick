@@ -213,11 +213,13 @@ class CList {
    public:
     struct node {
         node() : next(nullptr) {}
-        node(T x, std::shared_ptr<node> t = nullptr) : item(x), next(t) {}
+        node(T x, node *t = nullptr) : item(x), next(t) {}
 
         T item;
-        std::shared_ptr<node> next;
+        node *next;
     };
+
+    using link = node *;
 
     CList() : head(nullptr), curr(head) {}
     CList(size_t N, T max_val) {
@@ -226,37 +228,37 @@ class CList {
         }
     }
 
-    std::shared_ptr<node> &get_head() { return head; }
+    link &get_head() { return head; }
 
-    void insert(std::shared_ptr<node> x, std::shared_ptr<node> t);
-    void emplace(T val, std::shared_ptr<node> t = nullptr);
+    void insert(link x, link t);
+    void emplace(T val, link t = nullptr);
 
-    void remove(std::shared_ptr<node> x);
+    void remove(link x);
 
     bool empty();
-    std::shared_ptr<node> next(std::shared_ptr<node> t) { return t->next; }
+    link next(link t) { return t->next; }
 
-    void print(std::shared_ptr<node> curr_ptr = nullptr);
+    void print(link curr_ptr = nullptr);
     void sort();
 
    private:
-    std::shared_ptr<node> findmax(std::shared_ptr<node>);
+    link findmax(link);
 
-    std::shared_ptr<node> head;
-    std::shared_ptr<node> curr;
+    link head;
+    link curr;
 };
 
 template <typename T>
-inline void CList<T>::insert(std::shared_ptr<node> dest, std::shared_ptr<node> ptr) {
+inline void CList<T>::insert(link dest, link ptr) {
     ptr->next = dest->next;
     dest->next = ptr;
 }
 
 template <typename T>
-inline void CList<T>::emplace(T val, std::shared_ptr<node> t) {
+inline void CList<T>::emplace(T val, link t) {
     if (!t) t = curr;
 
-    auto ptr = std::make_shared<node>(val);
+    auto ptr = new node(val);
 
     if (empty())
         curr = head = ptr;
@@ -267,7 +269,7 @@ inline void CList<T>::emplace(T val, std::shared_ptr<node> t) {
 }
 
 template <typename T>
-inline void CList<T>::remove(std::shared_ptr<node> x) {
+inline void CList<T>::remove(link x) {
     auto t = x->next;
 
     if (x->next == head) head = t->next;
@@ -281,17 +283,18 @@ inline bool CList<T>::empty() {
 }
 
 template <typename T>
-void CList<T>::print(std::shared_ptr<node> curr_ptr) {
-    if (empty()) cout << "list is empty\n";
+void CList<T>::print(link curr_ptr) {
+    if (empty()) {
+        cout << "list is empty\n";
+        return;
+    }
 
     if (!curr_ptr) curr_ptr = head;
-
-    auto start = curr_ptr;
 
     do {
         cout << curr_ptr->item << " ";
         curr_ptr = curr_ptr->next;
-    } while (curr_ptr->next);
+    } while (curr_ptr);
 
     cout << endl;
 }
@@ -299,7 +302,7 @@ void CList<T>::print(std::shared_ptr<node> curr_ptr) {
 template <typename T>
 void CList<T>::sort() {
     auto dummy = std::make_shared<node>();
-    std::shared_ptr<node> start = dummy, out = nullptr;
+    link start = dummy, out = nullptr;
 
     start->next = head;
 
@@ -315,7 +318,7 @@ void CList<T>::sort() {
 }
 
 template <typename T>
-std::shared_ptr<typename CList<T>::node> CList<T>::findmax(std::shared_ptr<node> h) {
+typename CList<T>::node *CList<T>::findmax(link h) {
     auto prev_max_node = h;
     T max = h->item;
 
